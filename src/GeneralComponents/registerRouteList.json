@@ -1,0 +1,5 @@
+{
+    "routes": [
+        "https://api.riset.ai/api_fr/v2/registerimage"
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "store": [
+        {
+        "gondola": "A",
+        "items": [
+            {"SKU" : "Simba Chocho Chips 170g", "QTY" : 4},
+            {"SKU" : "Mentos 40g", "QTY" : 2},
+            {"SKU" : "Good Time Milky Vanilla", "QTY" : 5}
+        ]
+        }, 
+        
+        {   
+        "gondola": "B",
+        "items": [
+            {"SKU" : "Chitato Sapi Panggang 15g", "QTY" : 8},
+            {"SKU" : "Cheetos Ayam Bakar 15g", "QTY" : 7}
+        ]
+        } 
+    ]   
+}

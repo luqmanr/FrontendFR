@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../qualcomm-smartedu"
+		}
+	],
+	"settings": {
+		"python.pythonPath": "/usr/bin/python3"
+	}
+}

@@ -1,0 +1,458 @@
+<template>
+    
+    <div>
+        <div class="photo-compare row">
+            <div class="col-md-6 row">
+                <span class="col-sm-12">Nama: </span>
+                <input type=text v-model="payloadData.name" class="col-sm-11">           
+            </div>
+
+            <div class="col-md-6 row">
+                <span class="col-sm-12">user_id: (randomly generated)</span>
+                <input type=text v-model.lazy="payloadData.user_id" class="col-sm-11" readonly="readonly">      
+            </div>
+
+            <!-- Di sini bisa diganti dengan apa pun region yang disediakan oleh api_fr -->
+            <div class="col-md-6 row"
+                 style='margin: auto;'>
+
+                <!-- <b-collapse id="collapse-2" visible> -->
+                    <!-- <span class="col-md-12">client_id: </span>
+                    <select v-model.lazy="payloadData.region" class="col-md-12">
+                        <option v-for="regions in regionList" :key="regions">{{regions}}</option>
+                    </select> -->
+                <!-- </b-collapse>              -->
+
+                <!-- <b-button v-b-toggle.collapse-2 variant="primary"
+                    class='col-sm-12'
+                    ref='client_idButton'>
+                    Input a custom client_id
+                </b-button> -->
+
+                <!-- <b-collapse id="collapse-2" class='col-sm-12'>
+                    <span class="col-md-12">custom client_id: </span>
+                    <input type=text v-model.lazy="payloadData.region" class="col-sm-12"> 
+                </b-collapse> -->
+            </div>
+
+            <div class="col-md-6 row"
+                 style='margin: auto;'>
+                <!-- <span class="col-md-12">API List: </span>
+                <select v-model.lazy="apiInferencing" class="col-md-12">
+                    <option v-for="routes in recognizeRouteList" :key="routes">{{routes}}</option>
+                </select> -->
+
+                <!-- <b-button v-b-toggle.collapse-3 variant="primary"
+                    class='col-sm-12'
+                    ref='client_idButton'>
+                    Input a custom API
+                </b-button> -->
+
+                <!-- <b-collapse id="collapse-3" class='col-sm-12'>
+                    <span class="col-md-12">Custom API: </span>
+                    <input type=text v-model.lazy="apiInferencing" class="col-sm-12"> 
+                </b-collapse> -->
+            </div>
+
+           <!-- INI ISINYA PREVIEW IMG dari object "displayObjects.images_in",
+            DAN JUGA BUTTON UNTUK ORANG MASUKKIN FILE ke "image_base64"-->
+            <div class="photo-card col-md-6">
+                <div class="photo-section">
+                    <div class="photo">
+                        <img v-bind:src="displayObjects.placeholder_img" v-show="!displayObjects.images_in.length">
+                        <img v-bind:src="displayObjects.images_in" v-show="displayObjects.images_in.length">                     
+                    </div>
+                </div>
+
+                <div class="file-select">
+                    <label for="file_in">add photo</label>
+                    <input type="file" v-on:change="inputImageFile" id="file_in">
+                </div>
+            </div>
+
+            <div class="webcam-toggle row col-md-6">
+                <!-- Toggle Webcam -->
+                <!-- <div class='col-md-12'> -->
+                <b-button v-b-toggle.collapse-1 variant="primary"
+                    v-on:click="setWebcamStatusToBus"
+                    class='col-sm-12'
+                    ref='test_button'>
+                    Toggle Webcam
+                </b-button>
+    
+                <b-button v-on:click='testButton' 
+                          style='z-index:-2;'
+                          disabled>
+                </b-button>
+                <!-- </div> -->
+    
+                <b-collapse id="collapse-1" class="mt-2 row">
+                    <webcam-capture class='webcam-area col-sm-12' v-if="conditionals.webcam_in"></webcam-capture>
+                </b-collapse>
+    
+            </div>
+
+        </div>
+        
+        <!-- INI ISINYA RESPONSE JSON DARI SERVER
+        YAITU "response" & "conf_level" -->
+        <div class="response-area">
+            <div class="column">
+                <p>
+                    Raw Response: 
+                    <li v-show="responseData.raw_data.length"
+                        style='font-weight: bolder;
+                               list-style-type: none;
+                               font-size: larger;'>{{ responseData.raw_data }}</li>
+                </p>
+                
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <button 
+                v-if="payloadData.region == 0 || payloadData.name == 0"
+                title="ISI SEMUA INFORMASI terlebih dahulu" disabled>UPLOAD</button>
+            <button 
+                v-if="payloadData.region != 0 && payloadData.name != 0"
+                v-on:click="uploadImgInference">UPLOAD</button>
+        </div>
+
+        
+
+    </div>
+
+</template>
+
+<script>
+
+// IMPORT COMPONENTS
+import { bus } from '../main';
+import WebcamCapture from '../GeneralComponents/OpenWebcam.vue'
+
+// regionList.json isinya region2 / database tempat registrasi
+import regionJSON from '../GeneralComponents/regionList.json'
+import recognizeRouteJSON from '../GeneralComponents/registerRouteList.json'
+
+// LIBRARY IMPORTS
+import Vue from 'vue'
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+
+// IMAGE ASSETS
+import placeholder_img from '../assets/avatar_default.png'
+
+Vue.use(VueAxios, axios)
+
+export default {
+    components: {
+        'webcam-capture': WebcamCapture
+    },
+    data() {
+        return {
+            apiInferencing: 'https://api.riset.ai/api_fr/v2/registerimage', // apiEndpoint untuk melakukan inferencing
+            apiLocalSaveImg: '', // kalau mau save image locally, juga bisa dibikin api local
+            displayObjects: {
+                images_in: [],
+                placeholder_img: placeholder_img
+            },
+            payloadData: {
+                trx_id: "",
+                user_id: "", // mungkin secara database frontend, ini untuk mengindentifikasi user apa saja yang sudah di-register, format 9 numbers / "nnnnnnnn"
+                name: "", // isi nama yang ingin didaftarkan
+                image_base64: [],
+                region: "Trial",
+                timestamp:""
+            },
+            responseData:{
+                response_name: "", // nama yang akan dibalikkan oleh backend recognition. format = "return"."user_name":"String"
+                response_confidence: "", // confidence level nama yang direturn oleh backend. format = "return"."confidence_level":"String (Float)"
+                user_id_rkb: "", // random hash 16 digit. format = "return"."user_id_rkb":"nnnn-nnnn-nnnn-nnnn"
+                response_status: "", // kalau berhasil recognition, format = "status": 0
+                response_error: "", // kalau no face found, format = "error_message":"CORE ERROR - Face not found"
+                masker_status: "", // if there is mask detected = "true"
+                raw_data: ""
+            },
+            conditionals: {
+                webcam_in: false
+            },
+            response: {
+                status: [],
+                conf_level: []
+            },
+            side_select: undefined,
+            selected: undefined
+        }
+    },
+    methods: {
+        testButton() {
+            this.$refs.test_button.click()
+        },
+        // KUMPULAN METHOD UNTUK UPLOAD IMAGE DARI KOMPUTER
+        inputImageFile(e) {            
+            const files = e.target.files;
+            const file = files[0];
+
+            if (!file.type.match('image.*')) {
+                alert("Please insert an image file")
+                return;
+            }
+            
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                var image = e.target.result
+                this.displayObjects.images_in = image
+                this.payloadData.image_base64 = image.split(',')[1]
+            };
+            reader.readAsDataURL(file);
+        },
+        uploadImgInference() {
+            if (!this.displayObjects.images_in.length) {
+                alert("Please Insert Two Images");
+                return;
+            }
+            this.response.status = "uploading, please wait"
+
+            const photoPayload = {
+                "trx_id": this.payloadData.trx_id,
+                "user_id": this.payloadData.user_id,
+                "user_name": this.payloadData.name,
+                "user_image": this.payloadData.image_base64,
+                "client_id": this.payloadData.region,
+                "timestamp": this.payloadData.timestamp
+            };
+            console.log(photoPayload)
+
+            // var apiEndPoint = 'dummy'
+            var apiEndpoint = this.apiInferencing
+
+            axios.post(apiEndpoint,
+              JSON.stringify(photoPayload),
+              {headers :{'Content-Type': 'application/json'}},
+              {timeout: 10})
+                .then((data) => {
+                  console.log(data)
+                  try {
+                    if (data.data.status == 0) {
+                        this.responseData.raw_data = "SUCCESSFULLY REGISTERED"
+                    }
+                  } catch {
+                    this.responseData.raw_data = "NOT REGISTERED, PLEASE RETRY"
+                  }
+                  
+                })
+                .catch(error => {
+                    console.log(error.response.data.error_message)
+                    this.responseData.raw_data = error.response.data.error_message
+                });
+        
+            alert("images uploaded");
+        },
+        makeUser_id() {
+            var characters = '0123456789';
+            var charactersLength = characters.length;
+            var user_id = '';
+
+            for ( var i = 0; i < 9; i++ ) {
+                user_id += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+
+            this.payloadData.user_id = user_id
+            console.log(this.payloadData.user_id)
+        },
+        makeTrx_id() { // generate random string, seperti ini "ck5bec23-51f5-4c6e-aca5-ebd7115a8f40" / "8s-4s-4s-4s-12s"
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            var eight = '';
+            for ( var i = 0; i < 8; i++ ) {
+                eight += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            var four_one = '';
+            for ( var i = 0; i < 4; i++ ) {
+                four_one += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            var four_two = '';
+            for ( var i = 0; i < 4; i++ ) {
+                four_two += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            var four_three = '';
+            for ( var i = 0; i < 4; i++ ) {
+                four_three += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            var twelve = '';
+            for ( var i = 0; i < 12; i++ ) {
+                twelve += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            var trx_id = ''.concat(eight, '-', four_one, '-', four_two, '-', four_three, '-', twelve);
+
+            this.payloadData.trx_id = trx_id;
+            console.log(this.payloadData.trx_id)
+        },
+        makeTimestamp() { // generate timestamp dengan format seperti ini "2020-05-13 09:43:26+0700" / "yyyy-mm-dd hh:mm:ss+tttt"
+            var currentDate = new Date();
+            var date = ('0' + currentDate.getDate()).slice(-2);
+            var month = ('0' + (currentDate.getMonth()+1)).slice(-2); //Be careful! January is 0 not 1
+            var year = currentDate.getFullYear();
+            var hours = ('0' + currentDate.getHours()).slice(-2);
+            var minutes = ('0' + currentDate.getMinutes()).slice(-2);
+            var seconds = ('0' + currentDate.getSeconds()).slice(-2);
+            var clock = hours + ":" +  minutes + ":" +  seconds;
+            var timezone = '+0700'
+            var dateString = year + "-" + month + "-" + date + " " + clock + timezone;
+
+            this.payloadData.timestamp = dateString
+            console.log(this.payloadData.timestamp)
+        },
+        receiveSnapshotFromBus() {
+            bus.$on('getSnapshot', (image) => { // ini fungsi yang menerima snapshot dari webcam
+                this.displayObjects.images_in = image;
+                this.payloadData.image_base64 = image.split(',')[1]
+            })
+        },
+        receiveDestroyCommand() {
+            bus.$on('getDestroyCommand', (status) => {
+                console.log(status)
+                this.$refs.test_button.click()
+            })
+        },
+        setWebcamStatusToBus() {
+            this.conditionals.webcam_in = !this.conditionals.webcam_in
+            bus.$emit('setWebcamStatus', this.conditionals.webcam_in);
+        }
+    },
+    computed: {
+        regionList() {
+            return regionJSON.regions.map((regions) => {
+                return regions
+            })
+        },
+        recognizeRouteList() {
+            return recognizeRouteJSON.routes.map((routes) => {
+                return routes
+            })
+        },
+        responseDataComputed() {
+
+        }
+    },
+    beforeDestroy() {
+
+    },
+    created() {
+        this.receiveSnapshotFromBus();
+        this.receiveDestroyCommand();
+        this.makeTrx_id();
+        this.makeUser_id();
+        this.makeTimestamp();
+    },
+    mounted() {
+ 
+    }
+}        
+
+</script>
+
+<style scoped>
+
+.title {
+    font-size: 5vh;
+    color: white;
+}
+
+.photo-compare {
+    color: white;
+    /* background-color: dodgerblue; */
+    border-radius: 20px;
+    padding: 2vh 2vw 0vh 2vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.webcam-toggle {
+    color: white;
+    /* background-color: dodgerblue; */
+    border-radius: 20px;
+    padding: 2vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.photo-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 1vh 0vw 1vh 0vw;
+}
+
+.webcam-area {
+    /* padding-left: 5vw; */
+    text-align: center;
+    display: inline-block;
+}
+
+.photo {
+    width:200px;
+    height: 200px;
+    overflow: hidden;
+    border-radius: 10px;
+    margin: auto;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    align-self: center;
+    box-shadow: 2px 5px 25px black;
+}
+    .photo img {
+        /* max-height: 200px; */
+        max-width: 200px;
+    }
+
+.file-select {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 1vh;
+}   
+    .file-select label {
+        border-radius: 4px;
+        background: white;
+        color: indianred;
+        width: 15vh;
+        position:relative;
+        align-items: center;
+        cursor: pointer;
+        justify-content: center;
+        align-content: center;
+    }
+    .file-select input {
+        opacity: 0;
+        z-index: -2;
+    }
+
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* padding: 2vh; */
+}
+
+.response-area {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* padding: 2vh; */
+}
+
+.highlighted {
+    background-color: white;
+}
+
+</style>
