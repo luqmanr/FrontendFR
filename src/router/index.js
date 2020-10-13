@@ -11,6 +11,7 @@ import LoginPage from '@/pages/LoginPage'
 import CheckAttendancePage from '@/pages/CheckAttendancePage'
 
 // testing route import
+import LivenessDemo from '@/components/LivenessDemo'
 import TestPage from '@/tests/TestPage.vue'
 
 const routes = [
@@ -22,7 +23,9 @@ const routes = [
     {path: '/absensi', component: ImageUploader},
     {path: '/checkattendance', component: CheckAttendancePage},
 
+    {path: '/livenessdemo', component: LivenessDemo},
     {path: '/testpage', component: TestPage}
+
 ]
 
 const router = new VueRouter({

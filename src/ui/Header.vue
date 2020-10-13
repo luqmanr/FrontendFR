@@ -12,6 +12,7 @@
           <router-link class='col-md-2' :to="{ path:'/absensi' }" tag="button" exact>Absensi</router-link>
           <router-link class='col-md-2' to="/checkattendance" tag="button" exact>Check Attendance</router-link>
           <router-link class='col-md-2' to="/login" tag="button" exact>Admin</router-link>
+          <router-link class='col-md-2' to="/livenessdemo" tag="button" exact>Liveness Demo</router-link>
 
           <!-- Only admins have access to these pages -->
           <router-link v-if="buttonView" class='col-md-2' to="/testpage" tag="button" exact>Testpage</router-link>
