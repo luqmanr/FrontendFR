@@ -26,7 +26,7 @@
                  style="padding: 0vh 3vw 0vh 3vw;
                         margin: auto;">
 
-                <div class="column col-md-4"
+                <div class="column col-md-3"
                      style="margin: 1vh 0vw 1vh 0vw;
                      border-color: grey;
                      border-style: solid;">
@@ -36,7 +36,7 @@
                             font-size: larger;'>{{ responseData.verification }}</div>
                 </div>
 
-                <div class="column col-md-4"
+                <div class="column col-md-3"
                      style="margin: 1vh 0vw 1vh 0vw;
                      border-color: grey;
                      border-style: solid;">
@@ -46,7 +46,7 @@
                             font-size: larger;'>{{ responseData.confidenceLevel }}</div>
                 </div>
 
-                <div class="column col-md-4"
+                <div class="column col-md-3"
                      style="margin: 1vh 0vw 1vh 0vw;
                      border-color: grey;
                      border-style: solid;">
@@ -55,7 +55,50 @@
                             list-style-type: none;
                             font-size: larger;'>{{ responseData.liveness }}</div>
                 </div>
-                
+
+                <div class="column col-md-3"
+                     style="margin: 1vh 0vw 1vh 0vw;
+                     border-color: grey;
+                     border-style: solid;">
+                    <div>Pattern Wajah: </div>
+                    <div style='font-weight: bolder;
+                            list-style-type: none;
+                            font-size: larger;'>{{ responseData.pattern }}</div>
+                </div>
+
+                <div class="column col-md-3"
+                     style="margin: 1vh 0vw 1vh 0vw;
+                     border-color: grey;
+                     border-style: solid;">
+                    <div>Deteksi Blink: </div>
+                    <div style='font-weight: bolder;
+                            list-style-type: none;
+                            font-size: larger;'>{{ responseData.eye_blink }}</div>
+                </div>
+
+                <div class="column col-md-3"
+                     style="margin: 1vh 0vw 1vh 0vw;
+                     border-color: grey;
+                     border-style: solid;">
+                    <div>Roundtrip Frontend: </div>
+                    <div style='font-weight: bolder;
+                            list-style-type: none;
+                            font-size: larger;'>{{ timeDataFrontend }} seconds</div>
+                </div>
+
+                <div v-for="data in Object.keys(timeDataBackend)" 
+                  class="column col-md-3"
+                  style="margin: 1vh 0vw 1vh 0vw;
+                  border-color: grey;
+                  border-style: solid;">
+                    <div>
+                        <div>{{data}}</div>
+                        <div style='font-weight: bolder;
+                                list-style-type: none;
+                                font-size: larger;'>{{ timeDataBackend[data] }} seconds</div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -99,8 +142,12 @@ export default {
             responseData: {
                 verification: "-",
                 confidenceLevel: "-",
-                liveness: "-"
-            }
+                liveness: "-",
+                pattern: [],
+                eye_blink: "-"
+            },
+            timeDataFrontend: {},
+            timeDataBackend: {}
         }
     },
     methods: {
@@ -134,6 +181,7 @@ export default {
         },
         LivenessCheck() {
             this.ResetResponses()
+
             const payload = {
                 "user_image": this.userImage,
                 "user_video": this.userVideo,
@@ -141,6 +189,30 @@ export default {
                 "trx_id": this.$_TransactionID_transactionID
             }
             console.log(payload)
+
+            axios.interceptors.request.use( x => {
+                // to avoid overwriting if another interceptor
+                // already defined the same object (meta)
+                x.meta = x.meta || {}
+                x.meta.requestStartedAt = new Date().getTime();
+                return x;
+            })
+
+            axios.interceptors.response.use( x => {
+                    // console.log(`Execution time for: ${x.config.url} - ${new Date().getTime() - x.config.meta.requestStartedAt} ms`)
+                    return x
+                },
+                // Handle 4xx & 5xx responses
+                x => {
+                    // console.error(`Execution time for: ${x.config.url} - ${new Date().getTime() - x.config.meta.requestStartedAt} ms`)
+                    throw x
+                }
+            )
+
+            axios.interceptors.response.use( x => {
+                x.responseTime = new Date().getTime() - x.config.meta.beginTimer;
+                return x
+            })
 
             axios.post(this.livenessAPI,
               JSON.stringify(payload),
@@ -150,14 +222,23 @@ export default {
                 .then(alert("UPLOADING TO API") + this.livenessAPI)
                 .then(response => {
                     console.log(response)
+                    
                     this.responseData.verification = response.data.verification.status
                     this.responseData.confidenceLevel = response.data.verification.confidence_level
                     this.responseData.liveness = response.data.liveness.status
+                    this.responseData.pattern = response.data.liveness.pattern
+                    this.responseData.eye_blink = response.data.liveness.eye_blink
+                    this.timeDataFrontend = (new Date().getTime() - response.config.meta.requestStartedAt) / 1000
+                    this.timeDataBackend = response.data.time
 
                     if (response.data.error_message != "None") {
                         this.responseData.verification = response.data.error_message
                         this.responseData.confidenceLevel = "-"
                         this.responseData.liveness = "-"
+                        this.responseData.pattern = []
+                        this.responseData.eye_blink = response.data.liveness.eye_blink
+                        this.timeDataFrontend = (new Date().getTime() - response.config.meta.requestStartedAt) / 1000
+                        this.timeDataBackend = response.data.time
                     }
                 })
                 .catch(error => {
@@ -165,12 +246,20 @@ export default {
                     this.responseData.verification = error.data.verification.status
                     this.responseData.confidenceLevel = error.data.verification.confidence_level
                     this.responseData.liveness = error.data.liveness.status
+                    this.responseData.pattern = error.data.liveness.pattern
+                    this.responseData.eye_blink = error.data.liveness.eye_blink
+                    this.timeDataFrontend = (new Date().getTime() - error.config.meta.requestStartedAt) / 1000
+                    this.timeDataBackend = error.data.time
                 })
         },
         ResetResponses() {
             this.responseData.verification = "-"
             this.responseData.confidenceLevel = "-"
             this.responseData.liveness = "-"
+            this.responseData.pattern = []
+            this.responseData.eye_blink = "-"
+            this.timeDataFrontend = {}
+            this.timeDataBackend = {}
         }
     },
     watch: {

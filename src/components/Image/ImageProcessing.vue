@@ -51,13 +51,13 @@ export default {
                 DOM: undefined,
                 Context: undefined,
                 width: 1280,
-                height: 720
+                height: 1280
             },
             processedCanvas: {
                 DOM: undefined,
                 Context: undefined,
                 width: 1280,
-                height: 720
+                height: 1280
             },
             compressionQuality: 0.5,
             processedImage: undefined
@@ -78,10 +78,21 @@ export default {
         InitializeComponent_ResizeCanvas() {
             var imageObj = new Image()
             imageObj.onload = (e) => { 
-                this.originalCanvas.width = imageObj.width
-                this.originalCanvas.height = imageObj.height
-                this.processedCanvas.width = imageObj.width
-                this.processedCanvas.height = imageObj.height
+                var height, width
+                if (imageObj.width > imageObj.height) {
+                    width = imageObj.width
+                    height = imageObj.width
+                } else if (imageObj.width < imageObj.height) {
+                    width = imageObj.height
+                    height = imageObj.height
+                } else {
+                    width = imageObj.width
+                    height = imageObj.height
+                }
+                this.originalCanvas.width = width
+                this.originalCanvas.height = height
+                this.processedCanvas.width = width
+                this.processedCanvas.height = height
             }
             imageObj.src = this.imageToProcess
         },
@@ -107,23 +118,6 @@ export default {
             imageObj.src = this.imageToProcess
         },
         ResizeImage() {
-            // var newImageWidth
-            // var newImageHeight
-            // const canvasRatio = (this.processedCanvas.width / this.processedCanvas.height)
-
-            // if (this.resizeImageWidth == undefined && this.resizeImageHeight == undefined) {
-            //     newImageWidth = this.processedCanvas.width
-            //     newImageHeight = this.processedCanvas.height
-            // } else if (this.resizeImageWidth == undefined) {
-            //     newImageWidth = Math.round(this.resizeImageHeight * canvasRatio)
-            //     newImageHeight = this.resizeImageHeight
-            // } else if (this.resizeImageHeight == undefined) {
-            //     newImageHeight = Math.round(this.resizeImageWidth / canvasRatio)
-            //     newImageWidth = this.resizeImageWidth
-            // }
-            // this.processedCanvas.width = newImageWidth
-            // this.processedCanvas.height = newImageHeight
-
             var imageObj = new Image()
             imageObj.onload = (e) => {
                 this.processedCanvas.Context.drawImage(imageObj,0,0)

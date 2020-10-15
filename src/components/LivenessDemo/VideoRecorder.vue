@@ -53,13 +53,13 @@ export default {
                 audio: false, // false karena tidak perlu merekam suara
                 video: {
                     width: {
-                      min: 320, ideal: 960, max: 960 // setting resolusi rekaman video
+                      min: 320, ideal: 1920, max: 1920 // setting resolusi rekaman video
                     },
                     height: {
-                      min: 240, ideal: 480, max: 480 // setting resolusi rekaman video
+                      min: 240, ideal: 1080, max: 1920 // setting resolusi rekaman video
                     },
                     frameRate: {
-                      min: 15, ideal: 30, max: 30 // setting fps rekaman video
+                      min: 25, ideal: 60, max: 60 // setting fps rekaman video
                     },
                 }
             },
@@ -237,6 +237,8 @@ h5 {
     width: 720px;
     height: 360px;
     background-color: #242424;
+    -webkit-transform: scaleX(-0.5);
+    transform: scaleX(-1);
 }
 .replay-video {
     justify-self: center;

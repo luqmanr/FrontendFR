@@ -18,7 +18,8 @@
             <template v-slot:overlay>
                 <webcam-capture-card
                     @capturedImage="GetCapturedImageFromWebcam"
-                    :captureFrameToggle="captureFrameToggle"></webcam-capture-card>
+                    :captureFrameToggle="captureFrameToggle"
+                    :changeCameraToggle="changeCameraToggle"></webcam-capture-card>
             </template>
             
         </b-overlay>
@@ -31,6 +32,7 @@
             <button class="col-sm-12" @click="webcamActiveToggle=!webcamActiveToggle" v-if="!webcamActiveToggle">BUKA WEBCAM</button>
             <button class="col-sm-12" @click="webcamActiveToggle=!webcamActiveToggle" v-if="webcamActiveToggle">TUTUP WEBCAM</button>
             <button class="col-sm-12" v-if="webcamActiveToggle" @click="captureFrameToggle+=1">AMBIL FOTO WEBCAM</button>
+            <button class="col-sm-12" v-if="webcamActiveToggle" @click="ChangeCameraToggler()">UBAH MODE KAMERA</button>
         </div>
 
     </div>
@@ -60,7 +62,8 @@ export default {
         return {
             processedPhoto: undefined,
             webcamActiveToggle: false,
-            captureFrameToggle: 0
+            captureFrameToggle: 0,
+            changeCameraToggle: 'user'
         }
     },
     methods: {
@@ -88,6 +91,15 @@ export default {
                 this.userPhoto = e.target.result
             }
             reader.readAsDataURL(file);
+        },
+        ChangeCameraToggler() {
+            if (this.changeCameraToggle == 'user') {
+                this.changeCameraToggle = 'environment'
+            } else if (this.changeCameraToggle == 'environment') {
+                this.changeCameraToggle = 'user'
+            } else {
+                this.changeCameraToggle = 'user'
+            }
         },
     }
 

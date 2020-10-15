@@ -2,7 +2,8 @@
 
     <div id="webcam-component">
 
-        <button @click="CaptureFrameToggler">Capture Frame!</button>
+        <button @click="CaptureFrameToggler" style="visibility: hidden;">Capture Frame!</button>
+        <button @click="ChangeCameraToggler" style="visibility: hidden;">Change Camera!</button>
 
         <div id="camera-components">
             <webcam-qrscanner-input
@@ -11,7 +12,9 @@
             <webcam-input
               v-if='detectionMode == null'
               @CaptureImage="ReceiveCaptureImage"
-              :capture-image-toggle="captureFrameToggle"></webcam-input>
+              :CaptureImageToggle="captureFrameToggle"
+              :ChangeCameraToggle="changeCameraToggle"
+              :key="changeCameraToggle"></webcam-input>
         </div>
 
     </div>
@@ -21,7 +24,7 @@
 <script>
 import { bus } from '@/main'
 import WebcamQRScannerInput from '@/components/Camera/WebcamQrScannerInput.vue'
-import WebcamInput from '@/components/Camera/WebcamInput(2).vue'
+import WebcamInput from '@/components/Camera/WebcamInput.vue'
 
 export default {
     mixins: [
@@ -37,6 +40,9 @@ export default {
         },
         captureFrameToggle: {
             default: 0
+        },
+        changeCameraToggle: {
+            default: 'user'
         }
     },
     data() {
@@ -48,6 +54,15 @@ export default {
         CaptureFrameToggler() {
             this.captureFrameToggle += 1
         },
+        ChangeCameraToggler() {
+            if (this.changeCameraToggle == 'user') {
+                this.changeCameraToggle = 'environment'
+            } else if (this.changeCameraToggle == 'environment') {
+                this.changeCameraToggle = 'user'
+            } else {
+                this.changeCameraToggle = 'user'
+            }
+        },
         ReceiveCaptureImage(image) {
             this.capturedImage = image
             this.$emit("capturedImage", image)
@@ -58,5 +73,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
