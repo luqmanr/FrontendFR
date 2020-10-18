@@ -1,12 +1,8 @@
 <template>
 
     <div class="background">
-        <v-header :button-view="LoginState"></v-header>
-
-        <div>
-            <router-view></router-view>
-        </div>        
-
+        <!-- <v-header :button-view="LoginState"></v-header> -->
+        <router-view></router-view>
     </div>
 
 </template>
@@ -26,9 +22,9 @@ export default {
     components: {
         'v-header': Header
     },
-    // created() {
-    //     document.title = "Absensi Dashboard"
-    // },
+    created() {
+        // document.title = "riset.ai Dashboard"
+    },
     computed: {
         LoginState() {
             return this.$store.getters.getCurrentLoginState
@@ -50,9 +46,44 @@ export default {
     height: 100%;
 }
 .background {
-    background-color: rgb(30,30,30);
+    background-color:#182039;
     height: 100%;
-    /* width: 500vh; */
+}
+h1 {
+    font-family: Helvetica Neue;
+    font-weight: bold;
+    text-align: left;
+    color: white;
+}
+
+h2 {
+    font-family: Helvetica Neue;
+    font-weight: bold;
+    text-align: left;
+    color: white;
+}
+
+p {
+    font-family: Helvetica;
+    font-weight: bold;
+    text-align: left;
+    color: white;
+}
+
+/* fallback */
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialicons/v55/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
 }
 
 </style>

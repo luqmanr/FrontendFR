@@ -100,6 +100,7 @@ export default {
             var imageObj = new Image()
             imageObj.onload = (e) => {
                 this.originalCanvas.Context.drawImage(imageObj,0,0)
+                this.processedCanvas.Context.fillRect(0,0,1920,1920)
                 this.processedCanvas.Context.drawImage(imageObj,0,0)
                 this.processedImage = this.processedCanvas.DOM.toDataURL()
             }

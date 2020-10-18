@@ -2,12 +2,12 @@
 
     <div id="photo-processing-card" class="row">
 
-        <div id="processing-buttons" :class="processingButtons" class="col-sm-12 h-25">            
+        <div id="processing-buttons" :class="processingButtons" class="col-sm-12">            
             <button @click="toggles.rotateImage += 1" class="col-sm-12">ROTATE IMAGE</button>
             <!-- <button @click="toggles.resizeImage += 1">RESIZE IMAGE</button> -->
         </div>
         
-        <div id="preview-section" class="col-sm-12 h-75">
+        <div id="preview-section" class="col-sm-12" for="fileIn" @click="ClickInput">
             <img :src="processedImage" id="preview-image">
         </div>
 
@@ -21,7 +21,7 @@
               @imageProcessed="receiveProcessedImage"></image-processing>            
 
         </div>
-
+        <input type="file" @change="InputImageFile" id="fileIn">
     </div>
 
 </template>
@@ -84,7 +84,27 @@ export default {
             } else {
                 this.resizedImageHeight = height
             }
-        }
+        },
+        ClickInput() {
+            var inputEl = document.getElementById("fileIn")
+            inputEl.click()
+        },
+        InputImageFile(e) {    
+            console.log("method called")        
+            const files = e.target.files
+            const file = files[0]    
+
+            if (!file.type.match('image.*')) {
+                alert("Please insert an image file")
+                return
+            }
+    
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                this.imageToProcess = e.target.result
+            }
+            reader.readAsDataURL(file)
+        },
     },
     watch: {
         processedImage(image) {
@@ -105,11 +125,15 @@ export default {
 }
 
 #preview-section {
+    height: 100%;
     max-height: 100%;
     overflow: hidden;
 
     /* borders */
-    box-shadow: 0 3px 6px rgb(182, 0, 136), 0 1px 6px rgb(255, 0, 0);
+    border-style: solid;
+    border-color: #374369;
+    border-radius: 2em;
+    /* box-shadow: 0 3px 6px rgb(182, 0, 136), 0 1px 6px rgb(255, 0, 0); */
 
     margin: 0 auto;
     position: relative;
@@ -121,10 +145,25 @@ export default {
     margin: 0 auto;
     position: relative;
     z-index: 0;
+    cursor: pointer;
+}
+
+#processing-buttons {
+    padding: 1em;
 }
 
 button {
-    width: 50%;
+    font-family: Helvetica Neue;
+    font-weight: bold;
+    font-size: large;
+    color: white;
+    text-shadow: 2px 2px 4px #000000;
+
+    background-color: #374369;
+    border: none;
+    border-radius: 2em;
+    height: 2em;
+    max-height: 10em;
     margin: 0 auto;
     position: relative;
 }
@@ -133,6 +172,10 @@ button {
     visibility: visible;
 }
 .hide-buttons {
+    visibility: hidden;
+}
+
+input {
     visibility: hidden;
 }
 

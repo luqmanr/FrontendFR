@@ -115,6 +115,13 @@ export default {
     transform: scaleX(-1);
 }
 
+video {
+    /* -webkit-transform: scaleX(0.2); */
+    /* transform: scaleX(0.2); */
+    /* max-height: 60vh;
+    max-width: 60vw; */
+}
+
 canvas {
     position: absolute;
     z-index: -500;
