@@ -2,23 +2,23 @@
   <div>
     <img src='../assets/candy_stripe1.png' class='stripe'>
     <h1 class='title row'>
-      <span class='col-sm-4' style='text-align: right'>by Riset.ai</span>
+      <span class='col-sm-12' style='text-align: right'>by Riset.ai</span>
     </h1>
     <img src='../assets/candy_stripe1.png' class='stripe'>
 
     <nav>
       <ul class="row">
           <!-- All have access to these pages -->
-          <router-link class='col-md-2' :to="{ path:'/absensi' }" tag="button" exact>Absensi</router-link>
-          <router-link class='col-md-2' to="/checkattendance" tag="button" exact>Check Attendance</router-link>
-          <router-link class='col-md-2' to="/login" tag="button" exact>Admin</router-link>
-          <router-link class='col-md-2' to="/livenessdemo" tag="button" exact>Liveness Demo</router-link>
+          <router-link class='col-md-12' :to="{ path:'/absensi' }" tag="button" exact>Absensi</router-link>
+          <router-link class='col-md-12' to="/checkattendance" tag="button" exact>Check Attendance</router-link>
+          <router-link class='col-md-12' to="/login" tag="button" exact>Admin</router-link>
+          <router-link class='col-md-12' to="/livenessdemo" tag="button" exact>Liveness Demo</router-link>
 
           <!-- Only admins have access to these pages -->
-          <router-link v-if="buttonView" class='col-md-2' to="/testpage" tag="button" exact>Testpage</router-link>
-          <router-link v-if="buttonView" class='col-md-2' to="/registrationimage" tag="button" exact>Registration</router-link>
-          <router-link v-if="buttonView" class='col-md-2' to="/listuser" tag="button" exact>List User</router-link>
-          <router-link v-if="buttonView" class='col-md-2' to="/deleteuser" tag="button" exact>Delete User</router-link>
+          <router-link v-if="buttonView" class='col-md-12' to="/testpage" tag="button" exact>Testpage</router-link>
+          <router-link v-if="buttonView" class='col-md-12' to="/registrationimage" tag="button" exact>Registration</router-link>
+          <router-link v-if="buttonView" class='col-md-12' to="/listuser" tag="button" exact>List User</router-link>
+          <router-link v-if="buttonView" class='col-md-12' to="/deleteuser" tag="button" exact>Delete User</router-link>
         </ul>
     </nav>
   </div>

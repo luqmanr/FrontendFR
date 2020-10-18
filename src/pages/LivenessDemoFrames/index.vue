@@ -15,6 +15,7 @@
       </div>
       <div class="col-sm-12 app-card">
         <h2>Cek Liveness & Verifikasi Wajah</h2>
+        <p>Tekan tombol di bawah untuk memproses data!</p>
         <liveness-results :userImage="userImage" :userVideo="userVideo" :facePattern="facePattern"></liveness-results>
       </div>
     </div>

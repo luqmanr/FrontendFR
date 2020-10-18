@@ -36,7 +36,7 @@
                     <input type="file" @change="inputVideoFile" id="video_input">
                 </div>
                 <div class="col-sm-12 row">
-                    <button v-if="toggles.recordingStatus" @click="stopVideo"class="col-sm-6">🛑 | Stop Browser Camera</button>
+                    <button v-if="toggles.recordingStatus" @click="stopVideo"class="col-sm-6" style="background-color: #E02F65;">🛑 | Stop Browser Camera</button>
                 </div>                
             </div>
 

@@ -2,46 +2,101 @@
 
     <div>   
         <div class="input-area">
-            <button @click="LivenessCheck" class="col-sm-12" style="text-align: center;">VERIFIKASI</button>
+            <image-capture @userPhoto="$_ImageCapture_ReceiveImage" style="background-color: darkblue;"></image-capture>
+
+            <div class="pattern-selection row" style="background-color: rgb(117, 0, 108);">
+                <div v-for="selection,index in facePattern" class="col-sm-3">
+                    <div>
+                        <span style="color: white; margin: 5vh 0vw 0vh 0vw;">Pattern {{index+1}}: </span>
+                        <select v-model.lazy="facePattern[index]" style="margin: 0vh 0vw 5vh 0vw;">
+                            <option v-for="pattern,index in patternSelection" :key="index">{{pattern}}</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="col-sm-12" @click="RandomizePattern()">RANDOMIZE FACE PATTERN</button>
+            </div>
+            
+            <video-recorder @videoRecorded="$_VideoRecorder_ReceiveVideo" style="background-color: rgb(0, 78, 68);"></video-recorder>
+            
+            <button @click="LivenessCheck" class="col-sm-12 button">VERIFIKASI</button>
         </div>
+        
         <div class="response-area row">
             <div class="col-md-10 row"
                  style="padding: 0vh 3vw 0vh 3vw;
                         margin: auto;">
 
-                <div class="column col-md-3" style="padding: 1em;">
-                    <h4>Status Verifikasi: </h4>
-                    <div class="results">{{ responseData.verification }}</div>
+                <div class="column col-md-3"
+                     style="margin: 1vh 0vw 1vh 0vw;
+                     border-color: grey;
+                     border-style: solid;">
+                    <div>Status Verifikasi: </div>
+                    <div style='font-weight: bolder;
+                            list-style-type: none;
+                            font-size: larger;'>{{ responseData.verification }}</div>
                 </div>
 
-                <div class="column col-md-3" style="padding: 1em;">
-                    <h4>Confidence Level: </h4>
-                    <div class="results">{{ responseData.confidenceLevel }}</div>
+                <div class="column col-md-3"
+                     style="margin: 1vh 0vw 1vh 0vw;
+                     border-color: grey;
+                     border-style: solid;">
+                    <div>Confidence Level: </div>
+                    <div style='font-weight: bolder;
+                            list-style-type: none;
+                            font-size: larger;'>{{ responseData.confidenceLevel }}</div>
                 </div>
 
-                <div class="column col-md-3" style="padding: 1em;">
-                    <h4>Status Liveness: </h4>
-                    <div class="results">{{ responseData.liveness }}</div>
+                <div class="column col-md-3"
+                     style="margin: 1vh 0vw 1vh 0vw;
+                     border-color: grey;
+                     border-style: solid;">
+                    <div>Status Liveness: </div>
+                    <div style='font-weight: bolder;
+                            list-style-type: none;
+                            font-size: larger;'>{{ responseData.liveness }}</div>
                 </div>
 
-                <div class="column col-md-3" style="padding: 1em;">
-                    <h4>Pattern Wajah: </h4>
-                    <div class="results">{{ responseData.pattern }}</div>
+                <div class="column col-md-3"
+                     style="margin: 1vh 0vw 1vh 0vw;
+                     border-color: grey;
+                     border-style: solid;">
+                    <div>Pattern Wajah: </div>
+                    <div style='font-weight: bolder;
+                            list-style-type: none;
+                            font-size: larger;'>{{ responseData.pattern }}</div>
                 </div>
 
-                <div class="column col-md-3" style="padding: 1em;">
-                    <h4>Deteksi Blink: </h4>
-                    <div class="results">{{ responseData.eye_blink }}</div>
+                <div class="column col-md-3"
+                     style="margin: 1vh 0vw 1vh 0vw;
+                     border-color: grey;
+                     border-style: solid;">
+                    <div>Deteksi Blink: </div>
+                    <div style='font-weight: bolder;
+                            list-style-type: none;
+                            font-size: larger;'>{{ responseData.eye_blink }}</div>
                 </div>
 
-                <div class="column col-md-3" style="padding: 1em;">
-                    <h4>Roundtrip Frontend: </h4>
-                    <div class="results">{{ timeDataFrontend }} seconds</div>
+                <div class="column col-md-3"
+                     style="margin: 1vh 0vw 1vh 0vw;
+                     border-color: grey;
+                     border-style: solid;">
+                    <div>Roundtrip Frontend: </div>
+                    <div style='font-weight: bolder;
+                            list-style-type: none;
+                            font-size: larger;'>{{ timeDataFrontend }} seconds</div>
                 </div>
 
-                <div v-for="data in Object.keys(timeDataBackend)" class="column col-md-3" style="padding: 1em;">
-                    <h4>{{data}}</h4>
-                    <div class="results">{{ timeDataBackend[data] }} seconds</div>
+                <div v-for="data in Object.keys(timeDataBackend)" 
+                  class="column col-md-3"
+                  style="margin: 1vh 0vw 1vh 0vw;
+                  border-color: grey;
+                  border-style: solid;">
+                    <div>
+                        <div>{{data}}</div>
+                        <div style='font-weight: bolder;
+                                list-style-type: none;
+                                font-size: larger;'>{{ timeDataBackend[data] }} seconds</div>
+                    </div>
                 </div>
 
             </div>
@@ -76,21 +131,14 @@ export default {
         'video-recorder': VideoRecorder,
         'image-capture': ImageCapture
     },
-    props: {
-        userImage: {
-            default: undefined
-        },
-        userVideo: {
-            default: undefined
-        },
-        facePattern: {
-            default: undefined
-        }
-    },
     data() {
         return {
             livenessAPI: "https://riset.luqmanr.xyz/api_fr/demo/liveness-verification",
             avatarImage: DefaultAvatar,
+            userImage: undefined,
+            userVideo: undefined,
+            facePattern: [],
+            patternSelection: ['up','right','down','left','blink'],
             responseData: {
                 verification: "-",
                 confidenceLevel: "-",
@@ -108,6 +156,28 @@ export default {
         },
         $_VideoRecorder_ReceiveVideo(video) {
             this.userVideo = video
+        },
+        RandomizePattern() {
+            this.facePattern = ['-','-','-','-']
+            var numbers = []
+            var i
+            for (i = 0; i < this.patternSelection.length; i++) {
+                numbers.push(i)
+            }  
+            function shuffle(a) {
+                var j, x, i;
+                for (i = a.length - 1; i > 0; i--) {
+                    j = Math.floor(Math.random() * (i + 1));
+                    x = a[i];
+                    a[i] = a[j];
+                    a[j] = x;
+                }
+                return a;
+            }
+            var pattern = shuffle(numbers)
+            for (i = 0; i < this.facePattern.length; i++) {
+                this.facePattern[i] = this.patternSelection[pattern[i]]
+            }
         },
         LivenessCheck() {
             this.ResetResponses()
@@ -193,10 +263,12 @@ export default {
         }
     },
     watch: {
-
+        facePattern(e) {
+            console.log(e)
+        }
     },
     created() { 
-
+        this.RandomizePattern()
     },
     mounted() {
 
@@ -205,14 +277,19 @@ export default {
 </script>
 
 <style scoped>
+.button {
+    padding: 2vw; 
+    background-color: rgb(8, 107, 255);
+    font-weight: bolder;
+    color: white;
+}
 .input-area {
     color: white;
-    padding: 2em;
+    /* background-color: aliceblue; */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
 }
 .response-area {
     color: white;
@@ -221,38 +298,5 @@ export default {
     align-items: center;
     justify-content: center;
     /* padding: 2vh; */
-}
-
-.results {
-    padding: 1em;
-    background-color: #374369;
-    border-radius: 0.5em;
-}
-
-div {
-    font-family: Helvetica Neue;
-    font-weight: normal;
-    text-align: left;
-    color: white;
-}
-
-h4 {
-    padding: 0 0.2em;
-}
-
-button {
-    /* font */
-    font-family: Helvetica Neue;
-    font-weight: bold;
-    font-size: large;
-    color: white;
-    text-shadow: 2px 2px 4px #000000;
-    text-align: center;
-
-    background-color: #3D64FF;
-    border: none;
-    border-radius: 2em;
-    padding: 2em;
-    max-width: 20em;
 }
 </style>

@@ -1,7 +1,10 @@
 <template>
 
     <div class="background">
-        <!-- <v-header :button-view="LoginState"></v-header> -->
+        <b-button variant="primary" v-b-toggle.sidebar-1 style="font-size:2em;">☰</b-button>
+        <b-sidebar id="sidebar-1" title="Navigations" bg-variant="dark" text-variant="light" shadow>
+            <v-header :button-view="LoginState"></v-header>
+        </b-sidebar>
         <router-view></router-view>
     </div>
 

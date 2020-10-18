@@ -1,5 +1,6 @@
 <template>
     <div class="pattern-selection row">
+        <span class="col-sm-12">Hadapkan wajah Anda, sesuai Pattern di bawah ini per/2 Detik!</span>
         <div class="col-sm-9 row">
             <div v-for="selection,index in facePattern" class="col-sm-3" style="padding: 2em 0;">
                 <span style="color: white; margin: 5vh 0vw 0vh 0vw;">Pattern {{index+1}}: </span>
