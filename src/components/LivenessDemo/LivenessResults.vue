@@ -2,46 +2,58 @@
 
     <div>   
         <div class="input-area">
-            <button @click="LivenessCheck" class="col-sm-12" style="text-align: center;">VERIFIKASI</button>
+            <button v-if="userImage != undefined && userVideo != undefined" @click="LivenessCheck" class="col-sm-12" style="text-align: center;">VERIFIKASI</button>
+            <button v-if="userImage == undefined || userVideo == undefined"
+                    @click="LivenessCheck" 
+                    class="col-sm-12 disabled" 
+                    style="text-align: center;" 
+                    title="Fill out all the Data above!"
+                    disabled>VERIFIKASI</button>
         </div>
+
         <div class="response-area row">
             <div class="col-md-10 row"
                  style="padding: 0vh 3vw 0vh 3vw;
                         margin: auto;">
 
                 <div class="column col-md-3" style="padding: 1em;">
+                    <h4>Transaction ID: </h4>
+                    <div class="results h-75">{{ $_TransactionID_transactionID }}</div>
+                </div>
+
+                <div class="column col-md-3" style="padding: 1em;">
                     <h4>Status Verifikasi: </h4>
-                    <div class="results">{{ responseData.verification }}</div>
+                    <div class="results h-75">{{ responseData.verification }}</div>
                 </div>
 
                 <div class="column col-md-3" style="padding: 1em;">
                     <h4>Confidence Level: </h4>
-                    <div class="results">{{ responseData.confidenceLevel }}</div>
+                    <div class="results h-75">{{ responseData.confidenceLevel }}</div>
                 </div>
 
                 <div class="column col-md-3" style="padding: 1em;">
                     <h4>Status Liveness: </h4>
-                    <div class="results">{{ responseData.liveness }}</div>
+                    <div class="results h-75">{{ responseData.liveness }}</div>
                 </div>
 
                 <div class="column col-md-3" style="padding: 1em;">
                     <h4>Pattern Wajah: </h4>
-                    <div class="results">{{ responseData.pattern }}</div>
+                    <div class="results h-75">{{ responseData.pattern }}</div>
                 </div>
 
                 <div class="column col-md-3" style="padding: 1em;">
                     <h4>Deteksi Blink: </h4>
-                    <div class="results">{{ responseData.eye_blink }}</div>
+                    <div class="results h-75">{{ responseData.eye_blink }}</div>
                 </div>
 
                 <div class="column col-md-3" style="padding: 1em;">
                     <h4>Roundtrip Frontend: </h4>
-                    <div class="results">{{ timeDataFrontend }} seconds</div>
+                    <div class="results h-75">{{ timeDataFrontend }} seconds</div>
                 </div>
 
                 <div v-for="data in Object.keys(timeDataBackend)" class="column col-md-3" style="padding: 1em;">
                     <h4>{{data}}</h4>
-                    <div class="results">{{ timeDataBackend[data] }} seconds</div>
+                    <div class="results h-75">{{ timeDataBackend[data] }} seconds</div>
                 </div>
 
             </div>
@@ -85,11 +97,13 @@ export default {
         },
         facePattern: {
             default: undefined
+        },
+        livenessAPI: {
+            default: "https://riset.luqmanr.xyz/api_fr/demo/liveness-verification"
         }
     },
     data() {
         return {
-            livenessAPI: "https://riset.luqmanr.xyz/api_fr/demo/liveness-verification",
             avatarImage: DefaultAvatar,
             responseData: {
                 verification: "-",
@@ -111,6 +125,7 @@ export default {
         },
         LivenessCheck() {
             this.ResetResponses()
+            this.$_TransactionID_GenerateTransactionID()
 
             const payload = {
                 "user_image": this.userImage,
@@ -144,6 +159,7 @@ export default {
                 return x
             })
 
+            console.log(this.livenessAPI)
             axios.post(this.livenessAPI,
               JSON.stringify(payload),
               {headers :{'Content-Type': 'application/json'}},
@@ -173,13 +189,8 @@ export default {
                 })
                 .catch(error => {
                     console.log(error)
-                    this.responseData.verification = error.data.verification.status
-                    this.responseData.confidenceLevel = error.data.verification.confidence_level
-                    this.responseData.liveness = error.data.liveness.status
-                    this.responseData.pattern = error.data.liveness.pattern
-                    this.responseData.eye_blink = error.data.liveness.eye_blink
+                    this.responseData.verification = "Status 404 - API Not Available"
                     this.timeDataFrontend = (new Date().getTime() - error.config.meta.requestStartedAt) / 1000
-                    this.timeDataBackend = error.data.time
                 })
         },
         ResetResponses() {
@@ -199,7 +210,7 @@ export default {
 
     },
     mounted() {
-
+        this.$_TransactionID_transactionID = "-"
     }
 }
 </script>
@@ -230,19 +241,20 @@ export default {
 }
 
 div {
-    font-family: Helvetica Neue;
-    font-weight: normal;
+    font-family: Helvetica Neue Regular;
+    font-weight: bold;
     text-align: left;
     color: white;
 }
 
 h4 {
     padding: 0 0.2em;
+    font-size: 1em;
 }
 
 button {
     /* font */
-    font-family: Helvetica Neue;
+    font-family: Helvetica Neue Bold;
     font-weight: bold;
     font-size: large;
     color: white;
@@ -254,5 +266,14 @@ button {
     border-radius: 2em;
     padding: 2em;
     max-width: 20em;
+} button:hover {
+    background-color: #5a9bfd;
+} button:focus {
+    outline: 0 !important;
+} .disabled {
+    color: rgb(161, 161, 161);
+    background-color: #6d6d6d;
+} .disabled:hover {
+    background-color: #6d6d6d;
 }
 </style>

@@ -3,12 +3,13 @@
 
         <div class="registration-app row">
 
-            <div class="col-md-12 video-app">
+            <div class="col-md-5 video-app">
                 <div class="video-container">
 
                     <video class="media-video"
                            v-show="toggles.visibility"
                            ref="videoDOM"
+                           :poster="videoPoster"
                            autoplay></video>
 
                     <video controls
@@ -25,19 +26,17 @@
                 </div>
             </div>
 
-            <div class="col-md-12 row">
-                <button 
-                  @click="startVideo"
-                  class="col-sm-4">Record VIDEO</button>
-                
-                <div class="file-select col-sm-4">
-                    <label for="video_input">Input Video File</label>
+            <div class="col-md-7 row"  style="padding: 1em 0;">
+                <div class="col-sm-12 row" style="padding: 1em 0;" v-if="!toggles.recordingStatus">
+                    <button @click="startVideo" class="col-sm-6">🎥 | Open Browser Camera</button>
+                </div>          
+                <div class="file-select col-sm-12 row" v-if="!toggles.recordingStatus">
+                    <label for="video_input" class="col-sm-6"><p>🎬 | Input Video / Camera App</p></label>
                     <input type="file" @change="inputVideoFile" id="video_input">
                 </div>
-
-                <button v-if="toggles.recordingStatus" 
-                  @click="stopVideo"
-                  class="col-sm-4">Stop VIDEO</button>
+                <div class="col-sm-12 row">
+                    <button v-if="toggles.recordingStatus" @click="stopVideo"class="col-sm-6" style="background-color: #E02F65;">🛑 | Stop Browser Camera</button>
+                </div>                
             </div>
 
         </div>
@@ -45,9 +44,16 @@
 </template>
 
 <script>
+import VideoPoster from '@/assets/inputVideoIcon.png'
 export default {
+    props: {
+        videoDuration: {
+            default: 10000
+        }
+    },
     data() {
         return {
+            videoPoster: VideoPoster,
             videoRecorded: null,
             videoConstraints: {
                 audio: false, // false karena tidak perlu merekam suara
@@ -106,7 +112,6 @@ export default {
                 reader.onload = (event) => {
                     this.videoReplayEl.src = "data:video/webm;base64," + (event.target.result.split(',')[1])
                     this.videoRecorded = event.target.result.split(',')[1] // di split dulu info wrappernya, jadi hanya string base64 yang diambil
-                    console.log(this.videoReplayEl)
                 }
                 reader.readAsDataURL(event.data)
             }
@@ -121,18 +126,15 @@ export default {
             recorder.start() // memanggil recorder untuk memulai recording video ketika mediaStream didapatkan
             this.progressBar() // update progress bar untuk mengindikasikan sisa durasi perekaman
 
-            setTimeout(this.stopVideo, 10000) // ketika 10000 counts, maka video akan memanggil stopVideo() untuk menghentikan video
+            setTimeout(this.stopVideo, this.videoDuration) // ketika 10000 counts, maka video akan memanggil stopVideo() untuk menghentikan video
         },
         getMediaStreamError(error) { // kalau webcam tidak bisa dibuka, akan muncul error ini
             alert('Gagal buka webcam ' + error)
         },
         stopVideo() {
-            this.recorderEl.stop()
+            this.toggles.visibility = false
             this.toggles.recordingStatus = false
-
-            var barEl = this.$refs.progressBar
-            barEl.style.width = 100 + '%'
-
+            this.recorderEl.stop()
             clearInterval(this.toggles.timeInterval)
 
             // mengosongkan mediaStream, supaya tidak infinite loop
@@ -169,13 +171,15 @@ export default {
             var barEl = this.$refs.progressBar
             var id = setInterval(frame, 100)
             var width = 1
-            function frame() {
-                if (width >= 100) {
-                    clearInterval(id)
-                } 
-                else {
-                    width++;
+            var duration = 10000 / this.videoDuration
+            console.log(duration)
+
+            function frame(recordingStatus) {
+                if (width < 100) {
+                    width += duration;
                     barEl.style.width = width + '%'
+                } else {
+                    clearInterval(id)
                 }
             }
         },
@@ -206,9 +210,67 @@ export default {
 </script>
 
 <style scoped>
-button {
-    padding: 1vw;
+
+.file-select {
+    justify-content: center;
+    height: 6em;
+}   
+    .file-select label {
+        cursor: pointer;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        text-align: center;
+        background-color: #374369;
+        border-radius: 2em;
+        text-align: center;
+    } .file-select label:hover {
+        background-color: #5b6ca3;
+    } .file-select label p {
+        margin: auto;
+        text-align: center;
+    }
+    .file-select input {
+        visibility: hidden;
+        z-index: -2;
+        position: absolute;
+    }
+
+div {
+    /* font */
+    font-family: Helvetica Neue Bold;
+    font-weight: bold;
+    font-size: large;
+    color: white;
+    text-shadow: 2px 2px 4px #000000;
+
+    text-align: center;
+    justify-content: center;
+} p {
+    font-family: Helvetica Neue Bold;
+    font-weight: bold;
 }
+
+button {
+    /* font */
+    font-family: Helvetica Neue Bold;
+    font-weight: bold;
+    font-size: large;
+    color: white;
+    text-shadow: 2px 2px 4px #000000;
+    text-align: center;
+
+    background-color: #374369;
+    border: none;
+    border-radius: 2em;
+    height: 6em;
+    max-height: 10em;
+} button:hover {
+    background-color: #5b6ca3;
+} button:focus {
+    outline: 0 !important;
+}
+
 h5 {
     padding: 0vh 0vh 0vh 0vh;
     margin: 0vh 0vh 0vh 0vh;
@@ -225,27 +287,33 @@ h5 {
     position: relative;
 }
 .video-app {
-    margin-left: 4vh;
+    /* margin-left: 4vh; */
+    max-width: 80%;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    overflow: hidden;
+    display:block
 }
 .video-container {
-    width: 720px;
-    height: 380px;
+    max-width: 100%;
+    max-height: 30em;
     overflow: hidden;
+    display:block;
     background-color: black;
-    display:block
 }
 .media-video {
     justify-self: center;
-    width: 720px;
-    height: 360px;
+    max-width: 100%;
+    height: 20em;
     background-color: #242424;
     -webkit-transform: scaleX(-0.5);
     transform: scaleX(-1);
 }
 .replay-video {
     justify-self: center;
-    width: 720px;
-    height: 360px;
+    max-width: 100%;
+    max-height: 20em;
+    /* height: 360px; */
     background-color: #242424;
 }
 .media-canvas {
@@ -254,26 +322,6 @@ h5 {
     top: 0;
     overflow: hidden;
 }
-
-.file-select {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-}   
-    .file-select label {
-        padding: 1vw;
-        width: 100%;
-        height: 100%;
-        background: white;
-        color: rgb(0, 0, 0);
-        text-align: center;
-    }
-    .file-select input {
-        visibility: hidden;
-        z-index: -2;
-        position: absolute;
-    }
 
 .hidden {
     visibility: hidden;

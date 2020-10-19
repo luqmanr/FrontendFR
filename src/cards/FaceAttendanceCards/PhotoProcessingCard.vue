@@ -3,12 +3,15 @@
     <div id="photo-processing-card" class="row">
 
         <div id="processing-buttons" :class="processingButtons" class="col-sm-12">            
-            <button @click="toggles.rotateImage += 1" class="col-sm-12">ROTATE IMAGE</button>
+            <button @click="toggles.rotateImage += 1" class="col-sm-12">⟳ | Rotate Image</button>
             <!-- <button @click="toggles.resizeImage += 1">RESIZE IMAGE</button> -->
         </div>
         
-        <div id="preview-section" class="col-sm-12" for="fileIn" @click="ClickInput">
-            <img :src="processedImage" id="preview-image">
+        <div id="preview-section" class="col-sm-12 container">
+            <img :src="processedImage" id="preview-image" class="image">
+            <!-- <div class="overlay">
+                <div class="text"><i class="material-icons" style="font-size: 3em;">image</i> <br> Input Photo / Camera App</div>
+            </div> -->
         </div>
 
         <div id="image-processing">
@@ -145,15 +148,50 @@ export default {
     margin: 0 auto;
     position: relative;
     z-index: 0;
-    cursor: pointer;
 }
 
 #processing-buttons {
     padding: 1em;
 }
 
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: #8ea2ff;
+}
+
+.container:hover .overlay {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.text {
+  color: white;
+  font-size: 1.3em;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
 button {
-    font-family: Helvetica Neue;
+    font-family: Helvetica Neue Bold;
     font-weight: bold;
     font-size: large;
     color: white;
@@ -166,6 +204,8 @@ button {
     max-height: 10em;
     margin: 0 auto;
     position: relative;
+} button:hover {
+    background-color: #5b6ca3;
 }
 
 .show-buttons {

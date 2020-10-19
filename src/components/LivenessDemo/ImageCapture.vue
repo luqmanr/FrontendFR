@@ -27,21 +27,21 @@
 
         <div class="row col-sm-7" style="padding: 1em 0;">
             <div style="height: 1em;" class="col-sm-12"></div>
+            <div class="col-sm-12 row">
+                <button class="col-sm-6" @click="webcamActiveToggle=!webcamActiveToggle" v-if="!webcamActiveToggle">📷 | Open Browser Camera</button>
+            </div>
             <div class="file-select col-sm-12 row" v-if="!webcamActiveToggle">
                 <label class="col-sm-6" for="file_in"><p><i class="material-icons">image</i> | Input Photo / Camera App</p></label>
                 <input type="file" @change="InputImageFile" id="file_in">
             </div>
-            <div class="col-sm-12 row">
-                <button class="col-sm-6" @click="webcamActiveToggle=!webcamActiveToggle" v-if="!webcamActiveToggle">📷 | Open Browser Camera</button>
-            </div>
             <div class="col-sm-12 row" v-if="webcamActiveToggle">
-                <button @click="webcamActiveToggle=!webcamActiveToggle" style="background-color: #E02F65;">Tutup Webcam</button>
+                <button class="col-sm-6" @click="webcamActiveToggle=!webcamActiveToggle" style="background-color: #E02F65;">🛑 | Tutup Webcam</button>
             </div>
             <div class="col-sm-12 row" v-if="webcamActiveToggle" >
-                <button @click="captureFrameToggle+=1" style="background-color: #2FD08C;">Capture Foto</button>
+                <button class="col-sm-6" @click="captureFrameToggle+=1" style="background-color: #2FD08C;">📸 | Capture Foto</button>
             </div>
             <div class="col-sm-12 row" v-if="webcamActiveToggle">            
-                <button @click="ChangeCameraToggler()">UBAH MODE KAMERA</button>
+                <button class="col-sm-6" @click="ChangeCameraToggler()">🗘 | Switch Kamera</button>
             </div>
 
         </div>
@@ -151,7 +151,8 @@ export default {
         text-align: center;
         background-color: #374369;
         border-radius: 2em;
-        
+    } .file-select label:hover {
+        background-color: #5b6ca3;
     } .file-select label p {
         text-align: center;
         margin: auto;
@@ -164,7 +165,7 @@ export default {
 
 div {
     /* font */
-    font-family: Helvetica Neue;
+    font-family: Helvetica Neue Bold;
     font-weight: bold;
     font-size: large;
     color: white;
@@ -172,11 +173,14 @@ div {
 
     text-align: center;
     justify-content: center;
+} p {
+    font-family: Helvetica Neue Bold;
+    font-weight: bold;
 }
 
 button {
     /* font */
-    font-family: Helvetica Neue;
+    font-family: Helvetica Neue Bold;
     font-weight: bold;
     font-size: large;
     color: white;
@@ -188,8 +192,12 @@ button {
     border-radius: 2em;
     height: 6em;
     max-height: 7em;
-    width: 25em;
-    max-width: 40vw;
+
+    margin: 1em 0;
+} button:hover {
+    background-color: #5b6ca3;
+} button:focus {
+    outline: 0 !important;
 }
 
 </style>

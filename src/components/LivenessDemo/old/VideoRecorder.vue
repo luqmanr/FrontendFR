@@ -3,7 +3,7 @@
 
         <div class="registration-app row">
 
-            <div class="col-md-5 video-app">
+            <div class="col-md-12 video-app">
                 <div class="video-container">
 
                     <video class="media-video"
@@ -25,19 +25,19 @@
                 </div>
             </div>
 
-            <div class="col-md-7 row"  style="padding: 1em 0;">
-                <div class="col-sm-12 row" style="padding: 1em 0;" v-if="!toggles.recordingStatus">
-                    <button @click="startVideo" class="col-sm-6">
-                        <span>🎥 | Open Browser Camera</span>
-                    </button>
-                </div>          
-                <div class="file-select col-sm-12 row" v-if="!toggles.recordingStatus">
-                    <label for="video_input" class="col-sm-6"><p>🎬 | Input Video / Camera App</p></label>
+            <div class="col-md-12 row">
+                <button 
+                  @click="startVideo"
+                  class="col-sm-4">Record VIDEO</button>
+                
+                <div class="file-select col-sm-4">
+                    <label for="video_input">Input Video File</label>
                     <input type="file" @change="inputVideoFile" id="video_input">
                 </div>
-                <div class="col-sm-12 row">
-                    <button v-if="toggles.recordingStatus" @click="stopVideo"class="col-sm-6" style="background-color: #E02F65;">🛑 | Stop Browser Camera</button>
-                </div>                
+
+                <button v-if="toggles.recordingStatus" 
+                  @click="stopVideo"
+                  class="col-sm-4">Stop VIDEO</button>
             </div>
 
         </div>
@@ -106,6 +106,7 @@ export default {
                 reader.onload = (event) => {
                     this.videoReplayEl.src = "data:video/webm;base64," + (event.target.result.split(',')[1])
                     this.videoRecorded = event.target.result.split(',')[1] // di split dulu info wrappernya, jadi hanya string base64 yang diambil
+                    console.log(this.videoReplayEl)
                 }
                 reader.readAsDataURL(event.data)
             }
@@ -168,13 +169,13 @@ export default {
             var barEl = this.$refs.progressBar
             var id = setInterval(frame, 100)
             var width = 1
-
-            function frame(recordingStatus) {
-                if (width < 100) {
+            function frame() {
+                if (width >= 100) {
+                    clearInterval(id)
+                } 
+                else {
                     width++;
                     barEl.style.width = width + '%'
-                } else {
-                    clearInterval(id)
                 }
             }
         },
@@ -205,59 +206,9 @@ export default {
 </script>
 
 <style scoped>
-
-.file-select {
-    justify-content: center;
-    height: 6em;
-}   
-    .file-select label {
-        cursor: pointer;
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        text-align: center;
-        background-color: #374369;
-        border-radius: 2em;
-        text-align: center;
-        
-    } .file-select label p {
-        margin: auto;
-        text-align: center;
-    }
-    .file-select input {
-        visibility: hidden;
-        z-index: -2;
-        position: absolute;
-    }
-
-div {
-    /* font */
-    font-family: Helvetica Neue;
-    font-weight: bold;
-    font-size: large;
-    color: white;
-    text-shadow: 2px 2px 4px #000000;
-
-    text-align: center;
-    justify-content: center;
-}
-
 button {
-    /* font */
-    font-family: Helvetica Neue;
-    font-weight: bold;
-    font-size: large;
-    color: white;
-    text-shadow: 2px 2px 4px #000000;
-    text-align: center;
-
-    background-color: #374369;
-    border: none;
-    border-radius: 2em;
-    height: 6em;
-    max-height: 10em;
+    padding: 1vw;
 }
-
 h5 {
     padding: 0vh 0vh 0vh 0vh;
     margin: 0vh 0vh 0vh 0vh;
@@ -274,33 +225,27 @@ h5 {
     position: relative;
 }
 .video-app {
-    /* margin-left: 4vh; */
-    max-width: 80%;
-    margin: 0 0 0 0;
-    padding: 0 0 0 0;
-    overflow: hidden;
-    display:block
+    margin-left: 4vh;
 }
 .video-container {
-    max-width: 100%;
-    max-height: 30em;
+    width: 720px;
+    height: 380px;
     overflow: hidden;
-    display:block;
     background-color: black;
+    display:block
 }
 .media-video {
     justify-self: center;
-    max-width: 100%;
-    height: 20em;
+    width: 720px;
+    height: 360px;
     background-color: #242424;
     -webkit-transform: scaleX(-0.5);
     transform: scaleX(-1);
 }
 .replay-video {
     justify-self: center;
-    max-width: 100%;
-    max-height: 20em;
-    /* height: 360px; */
+    width: 720px;
+    height: 360px;
     background-color: #242424;
 }
 .media-canvas {
@@ -309,6 +254,26 @@ h5 {
     top: 0;
     overflow: hidden;
 }
+
+.file-select {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}   
+    .file-select label {
+        padding: 1vw;
+        width: 100%;
+        height: 100%;
+        background: white;
+        color: rgb(0, 0, 0);
+        text-align: center;
+    }
+    .file-select input {
+        visibility: hidden;
+        z-index: -2;
+        position: absolute;
+    }
 
 .hidden {
     visibility: hidden;

@@ -11,12 +11,12 @@
         <h2>Isi Data Anda </h2>
         <p>Capture video wajah</p>
         <face-pattern @facePattern="$_FacePattern_ReceiveFacePattern"></face-pattern>
-        <video-recorder @videoRecorded="$_VideoRecorder_ReceiveVideo"></video-recorder>
+        <video-recorder :videoDuration="videoDuration" @videoRecorded="$_VideoRecorder_ReceiveVideo"></video-recorder>
       </div>
       <div class="col-sm-12 app-card">
         <h2>Cek Liveness & Verifikasi Wajah</h2>
         <p>Tekan tombol di bawah untuk memproses data!</p>
-        <liveness-results :userImage="userImage" :userVideo="userVideo" :facePattern="facePattern"></liveness-results>
+        <liveness-results :userImage="userImage" :userVideo="userVideo" :facePattern="facePattern" :livenessAPI="livenessAPI"></liveness-results>
       </div>
     </div>
   </div>
@@ -24,10 +24,10 @@
 
 <script>
 // component imports
-import ImageCapture from '@/pages/LivenessDemoFrames/ImageCapture.vue'
-import VideoRecorder from '@/pages/LivenessDemoFrames/VideoRecorder.vue'
-import FacePattern from '@/pages/LivenessDemoFrames/FacePattern.vue'
-import LivenessResults from '@/pages/LivenessDemoFrames/LivenessResults.vue'
+import ImageCapture from '@/components/LivenessDemo/ImageCapture.vue'
+import VideoRecorder from '@/components/LivenessDemo/VideoRecorder.vue'
+import FacePattern from '@/components/LivenessDemo/FacePattern.vue'
+import LivenessResults from '@/components/LivenessDemo/LivenessResults.vue'
 
 export default {
   components: {
@@ -40,7 +40,9 @@ export default {
     return {
       userImage: undefined,
       userVideo: undefined,
-      facePattern: undefined
+      facePattern: undefined,
+      videoDuration: 10000,
+      livenessAPI: "https://riset.luqmanr.xyz/api_fr/demo/liveness-verification/v1.0"
     }
   },
   methods: {
@@ -72,5 +74,9 @@ export default {
   margin: 1em 0em 1em 0em;
 
   max-width: 100vw;
+}
+
+p {
+  font-family: Helvetica Neue Regular;
 }
 </style>
