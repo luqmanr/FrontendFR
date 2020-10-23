@@ -1,106 +1,71 @@
 <template>
-  <div>
-    <div style="color: white;">{{ livenessResponses }}</div>
-    <!-- <b-overlay class="col-sm-5" no-fade :show="webcamActiveToggle" id="webcam-capture" >
-      <template v-slot:overlay> -->
-        <webcam-capture-card
-          v-if="webcamActiveToggle"
-          @capturedImage="GetCapturedImageFromWebcam"
-          :captureFrameToggle="captureFrameToggle">
-        </webcam-capture-card>
-      <!-- </template>
-    </b-overlay> -->
-    <button @click="webcamActiveToggle = !webcamActiveToggle">Toggle Webcam</button>
+  <div class="app">
+    <div class="row app-cards">
+      <h1 class="col-sm-12">Liveness Verification Page</h1>
+      <div class="col-sm-12 app-card">
+        <h2>Isi Data Anda </h2>
+        <p>Capture foto wajah</p>
+        <div class="row">
+          <div class="col-sm-6" style="color: white;">{{ livenessResponse }}</div>
+          <image-capture @livenessResponse="$_ImageCapture_ReceiveLivenessResponse" class="col-sm-12"></image-capture>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import WebcamCaptureCard  from '@/cards/FaceAttendanceCards/WebcamCaptureCard.vue'
-
-// mixins import
-import TransactionID    from '@/mixins/services/state/TransactionID'
-import Timestamp        from '@/mixins/services/state/Timestamp'
+// component imports
+import ImageCapture from '@/tests/CheckLivenessStreaming.vue'
+import LivenessResults from '@/components/LivenessDemo/LivenessResults.vue'
 
 export default {
-  mixins: [
-    TransactionID,
-    Timestamp
-  ],
   components: {
-    'webcam-capture-card': WebcamCaptureCard
-  },
-  props: {
-    livenessAPI: {
-      // default: "https://riset.luqmanr.xyz/api_fr/demo/liveness-verification/v1.2"
-      default: "localhost:5901"
-    }
+    'image-capture': ImageCapture,
+    'liveness-results': LivenessResults
+    
   },
   data() {
     return {
-      userImage: undefined,
-      pattern: ["left"],
-      livenessResponses: "placeholder",
-      captureFrameToggle: 0,
-      webcamActiveToggle: false
+      livenessAPI: "https://riset.luqmanr.xyz/api_fr/demo/liveness-verification/v1.0",
+      livenessResponse: ["{result: this is a placeholder, result will show up here}"],
     }
   },
   methods: {
-    helloWorld() {
-      console.log("hello world")
-    },
-    GetCapturedImageFromWebcam(image) {
+    $_ImageCapture_ReceiveImage(image) {
       console.log("image received")
-      this.userImage = image
+      this.userImage = image.split(',')[1]
     },
-    CheckLiveness() {
-      const payload = {
-        "user_image": this.userImage,
-        "pattern":    this.pattern,
-        "trx_id":     this.$_TransactionID_transactionID
-      }
-      return this.axios.post(
-        this.livenessAPI,
-        JSON.stringify(payload),
-        {headers :{'Content-Type': 'application/json'}}
-      )
+    $_ImageCapture_ReceiveLivenessResponse(response) {
+      this.livenessResponse = response
     },
-    CaptureImageInterval() {  
-      this.interval = setInterval(() => {
-        this.CheckLiveness()
-          .then(result => {
-            console.log(result)
-            this.livenessResponses = result.data.liveness
-            this.CaptureFrameToggler()
-          }).catch(error => {
-            console.log(error)
-            this.livenessResponses = error.data
-            this.CaptureFrameToggler()
-          })
-      }, 1000)
+    $_VideoRecorder_ReceiveVideo(video) {
+      console.log("video received")
+      this.userVideo = video
     },
-    CaptureFrameToggler() {
-      this.captureFrameToggle += 1
-    },
-  },
-  watch: {
-    webcamActiveToggle(e) {
-      if (e == true) {
-        this.$_TransactionID_GenerateTransactionID()
-        this.CaptureFrameToggler()
-        this.CaptureImageInterval()
-      } else {
-        clearInterval(this.interval)
-      }
+    $_FacePattern_ReceiveFacePattern(pattern) {
+      console.log(pattern)
+      this.facePattern = pattern
     }
-  },
-  mounted() {
-    
-  },
-  created() {
-    
   }
 }
 </script>
 
 <style scoped>
+.app {
+  padding: 2em;
+}
+.app-card {
+  background: #242E4E;
+  border-radius: 3em;
+
+  padding: 3vh 5vw;
+  margin: 1em 0em 1em 0em;
+
+  max-width: 100vw;
+}
+
+p {
+  font-family: Helvetica Neue Regular;
+}
 </style>

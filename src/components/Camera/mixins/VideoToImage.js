@@ -5,6 +5,7 @@ export default {
             $_VideoToImage_VideoHeight: undefined,
 
             $_VideoToImage_ImageString: undefined,
+            $_VideoToImage_CompressionQuality: 0.5,
 
             $_VideoToImage_VideoDOM: undefined,
             $_VideoToImage_CanvasDOM: undefined,
@@ -22,7 +23,7 @@ export default {
                 this.$_VideoToImage_VideoWidth,
                 this.$_VideoToImage_VideoHeight
             )
-            this.$_VideoToImage_ImageString = this.$_VideoToImage_CanvasDOM.toDataURL()
+            this.$_VideoToImage_ImageString = this.$_VideoToImage_CanvasDOM.toDataURL('image/jpeg', this.$_VideoToImage_CompressionQuality)
         },
         $_VideoToImage_EmitImageObject() {
             this.$emit("CaptureImage", this.$_VideoToImage_ImageString)

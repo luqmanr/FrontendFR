@@ -26,6 +26,7 @@ const routes = [
 
     {path: '/livenessdemo', component: LivenessDemo},
     {path: '/livenessdemo-v1.1', component: LivenessDemov1dot1},
+    {path: '/livenessdemo-v1.2', component: TestPage},
     {path: '/testpage', component: TestPage}
 
 ]

@@ -162,8 +162,8 @@ export default {
             console.log(this.livenessAPI)
             axios.post(this.livenessAPI,
               JSON.stringify(payload),
-              {headers :{'Content-Type': 'application/json'}},
-            //   {timeout: 10000}
+              {headers :{'Content-Type': 'application/json'}}
+            //   {timeout: 20000}
               )
                 .then(alert("UPLOADING TO API") + this.livenessAPI)
                 .then(response => {

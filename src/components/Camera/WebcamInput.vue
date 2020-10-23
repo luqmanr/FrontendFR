@@ -12,7 +12,8 @@
           ref="video" 
           playsinline autoplay 
           id="webcam-video"
-          :class="ChangeCameraToggle"></video>
+          :class="ChangeCameraToggle"
+          :style="{ 'transform': transform, '-webkit-transform': transform }"></video>
 
     </div>
   
@@ -40,6 +41,9 @@ export default {
         ChangeCameraToggle: {
             default: 'user'
         },
+        transform: {
+            default: "scaleX(-1) scaleY(1)"
+        }
     },
     components: {
     },
@@ -111,8 +115,8 @@ export default {
   
 <style scoped>
 .user {
-    -webkit-transform: scaleX(-0.5);
-    transform: scaleX(-1);
+    /* -webkit-transform: scaleX(-0.5) scaleY(0.5);
+    transform: scaleX(-0.5) scaleY(0.5); */
 }
 
 video {

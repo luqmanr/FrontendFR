@@ -127,7 +127,8 @@ export default {
             imageObj.src = this.imageToProcess
         },
         EmitImageObject() {
-            this.processedImage = this.processedCanvas.DOM.toDataURL('image/jpeg', this.compressionQuality)
+            // this.processedImage = this.processedCanvas.DOM.toDataURL('image/jpeg', this.compressionQuality)
+            this.processedImage = this.processedCanvas.DOM.toDataURL()
             this.$emit("imageProcessed", this.processedImage)
         }
 

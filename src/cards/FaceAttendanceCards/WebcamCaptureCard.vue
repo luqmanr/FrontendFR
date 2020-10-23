@@ -14,6 +14,7 @@
               @CaptureImage="ReceiveCaptureImage"
               :CaptureImageToggle="captureFrameToggle"
               :ChangeCameraToggle="changeCameraToggle"
+              :transform="'scaleX(-0.5) scaleY(0.5)'"
               :key="changeCameraToggle"></webcam-input>
         </div>
 

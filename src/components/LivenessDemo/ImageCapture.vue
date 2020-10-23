@@ -34,11 +34,11 @@
                 <label class="col-sm-6" for="file_in"><p><i class="material-icons">image</i> | Input Photo / Camera App</p></label>
                 <input type="file" @change="InputImageFile" id="file_in">
             </div>
-            <div class="col-sm-12 row" v-if="webcamActiveToggle">
-                <button class="col-sm-6" @click="webcamActiveToggle=!webcamActiveToggle" style="background-color: #E02F65;">🛑 | Tutup Webcam</button>
-            </div>
             <div class="col-sm-12 row" v-if="webcamActiveToggle" >
                 <button class="col-sm-6" @click="captureFrameToggle+=1" style="background-color: #2FD08C;">📸 | Capture Foto</button>
+            </div>
+            <div class="col-sm-12 row" v-if="webcamActiveToggle">
+                <button class="col-sm-6" @click="webcamActiveToggle=!webcamActiveToggle" style="background-color: #E02F65;">🛑 | Tutup Webcam</button>
             </div>
             <div class="col-sm-12 row" v-if="webcamActiveToggle">            
                 <button class="col-sm-6" @click="ChangeCameraToggler()">🗘 | Switch Kamera</button>

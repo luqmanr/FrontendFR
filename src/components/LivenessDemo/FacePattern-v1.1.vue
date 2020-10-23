@@ -20,7 +20,7 @@ export default {
     data() {
         return {
             facePattern: [],
-            patternSelection: ['up','right','down','left','blink'],
+            patternSelection: ['up','right','down','left'],
         }
     },
     methods: {
