@@ -13,6 +13,7 @@ import CheckAttendancePage from '@/pages/CheckAttendancePage'
 // testing route import
 import LivenessDemo from '@/components/LivenessDemo'
 import LivenessDemov1dot1 from '@/components/LivenessDemo/index-v1.1.vue'
+import LivenessDemov1dot2 from '@/components/LivenessDemo/index-v1.2.vue'
 import TestPage from '@/tests/TestPage.vue'
 
 const routes = [
@@ -26,7 +27,7 @@ const routes = [
 
     {path: '/livenessdemo', component: LivenessDemo},
     {path: '/livenessdemo-v1.1', component: LivenessDemov1dot1},
-    {path: '/livenessdemo-v1.2', component: TestPage},
+    {path: '/livenessdemo-v1.2', component: LivenessDemov1dot2},
     {path: '/testpage', component: TestPage}
 
 ]

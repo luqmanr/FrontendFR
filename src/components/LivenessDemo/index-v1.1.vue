@@ -16,7 +16,12 @@
         <div class="col-sm-12 app-card">
           <h2>Cek Liveness & Verifikasi Wajah</h2>
           <p>Tekan tombol di bawah untuk memproses data!</p>
-          <liveness-results :userImage="userImage" :userVideo="userVideo" :facePattern="facePattern" :livenessAPI="livenessAPI"></liveness-results>
+          <liveness-results @LivenessResponse="$_LivenessResults_ReceiveLivenessResponse" :userImage="userImage" :userVideo="userVideo" :facePattern="facePattern" :livenessAPI="livenessAPI"></liveness-results>
+        </div>
+        <div class="col-sm-12 app-card">
+          <h2>Log Data Asli (Ground Truth)</h2>
+          <p>for logs and debugging purposes</p>
+          <groundtruth-logger :livenessResponse="livenessResponse"></groundtruth-logger>
         </div>
       </div>
     </div>
@@ -28,13 +33,15 @@
   import VideoRecorder from '@/components/LivenessDemo/VideoRecorder.vue'
   import FacePattern from '@/components/LivenessDemo/FacePattern-v1.1.vue'
   import LivenessResults from '@/components/LivenessDemo/LivenessResults.vue'
+  import GroundTruthLogger from '@/components/LivenessDemo/GroundTruthLogger.vue'
   
   export default {
     components: {
       'image-capture': ImageCapture,
       'video-recorder': VideoRecorder,
       'face-pattern': FacePattern,
-      'liveness-results': LivenessResults
+      'liveness-results': LivenessResults,
+      'groundtruth-logger': GroundTruthLogger
     },
     data() {
       return {
@@ -57,6 +64,10 @@
       $_FacePattern_ReceiveFacePattern(pattern) {
         console.log(pattern)
         this.facePattern = pattern
+      },
+      $_LivenessResults_ReceiveLivenessResponse(response) {
+        console.log(response)
+        this.livenessResponse = response
       }
     }
   }

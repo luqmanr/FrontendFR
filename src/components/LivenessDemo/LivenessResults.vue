@@ -48,12 +48,12 @@
 
                 <div class="column col-md-3" style="padding: 1em;">
                     <h4>Roundtrip Frontend: </h4>
-                    <div class="results h-75">{{ timeDataFrontend }} seconds</div>
+                    <div class="results h-75">{{ responseData.timeDataFrontend }} seconds</div>
                 </div>
 
-                <div v-for="data in Object.keys(timeDataBackend)" class="column col-md-3" style="padding: 1em;">
+                <div v-for="data in Object.keys(responseData.timeDataBackend)" class="column col-md-3" style="padding: 1em;">
                     <h4>{{data}}</h4>
-                    <div class="results h-75">{{ timeDataBackend[data] }} seconds</div>
+                    <div class="results h-75">{{ responseData.timeDataBackend[data] }} seconds</div>
                 </div>
 
             </div>
@@ -110,7 +110,10 @@ export default {
                 confidenceLevel: "-",
                 liveness: "-",
                 pattern: [],
-                eye_blink: "-"
+                eye_blink: "-",
+                timeDataFrontend: {},
+                timeDataBackend: {},
+                responseTrxID: undefined,
             },
             timeDataFrontend: {},
             timeDataBackend: {}
@@ -169,13 +172,13 @@ export default {
                 .then(response => {
                     console.log(response)
                     
+                    this.responseData.timeDataFrontend = (new Date().getTime() - response.config.meta.requestStartedAt) / 1000
                     this.responseData.verification = response.data.verification.status
                     this.responseData.confidenceLevel = response.data.verification.confidence_level
                     this.responseData.liveness = response.data.liveness.status
                     this.responseData.pattern = response.data.liveness.pattern
                     this.responseData.eye_blink = response.data.liveness.eye_blink
-                    this.timeDataFrontend = (new Date().getTime() - response.config.meta.requestStartedAt) / 1000
-                    this.timeDataBackend = response.data.time
+                    this.responseData.timeDataBackend = response.data.time
 
                     if (response.data.error_message != "None") {
                         this.responseData.verification = response.data.error_message
@@ -183,15 +186,21 @@ export default {
                         this.responseData.liveness = "-"
                         this.responseData.pattern = []
                         this.responseData.eye_blink = response.data.liveness.eye_blink
-                        this.timeDataFrontend = (new Date().getTime() - response.config.meta.requestStartedAt) / 1000
-                        this.timeDataBackend = response.data.time
+                        this.responseData.timeDataBackend = response.data.time
                     }
                 })
                 .catch(error => {
                     console.log(error)
+                    this.responseData.timeDataFrontend = (new Date().getTime() - error.config.meta.requestStartedAt) / 1000
                     this.responseData.verification = "Status 404 - API Not Available"
-                    this.timeDataFrontend = (new Date().getTime() - error.config.meta.requestStartedAt) / 1000
                 })
+                .then(e => {
+                    this.responseData.responseTrxID = this.$_TransactionID_transactionID
+                    this.EmitResponse()
+                })
+        },
+        EmitResponse() {
+            this.$emit("LivenessResponse", this.responseData)
         },
         ResetResponses() {
             this.responseData.verification = "-"
@@ -199,8 +208,8 @@ export default {
             this.responseData.liveness = "-"
             this.responseData.pattern = []
             this.responseData.eye_blink = "-"
-            this.timeDataFrontend = {}
-            this.timeDataBackend = {}
+            this.responseData.timeDataFrontend = {}
+            this.responseData.timeDataBackend = {}
         }
     },
     watch: {
