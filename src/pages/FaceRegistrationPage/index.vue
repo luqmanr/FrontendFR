@@ -1,5 +1,19 @@
 <template>
-  <div>
+  <div class="app">
+    <div class="row app-cards">
+      <h1 class="col-sm-12">Registration</h1>
+      <div class="col-sm-12 app-card">
+        <h2>Isi Data Anda</h2>
+        <p>Capture foto wajah</p>
+        <image-capture @userPhoto="$_ImageCapture_ReceiveImage"></image-capture>
+      </div>
+      <RegistrationRequestCard
+        :payloadUsername="payloadData.username"
+        :payloadCluster="payloadData.cluster"
+        :payloadClientId="payloadData.client_id"
+        :payloadUserId="payloadData.user_id"
+      ></RegistrationRequestCard>
+    </div>
     <div class="photo-compare row">
       <div class="col-md-6 row">
         <span class="col-sm-12">Nama: </span>
@@ -149,6 +163,9 @@
 import Vue from "vue";
 import { bus } from "@/main";
 
+import ImageCapture from "@/components/LivenessDemo/ImageCapture.vue";
+import RegistrationRequestCard from "@/components/RegistrationRequestCard.vue";
+
 // mixins imports
 import TransactionID from "@/mixins/services/state/TransactionID";
 import Timestamp from "@/mixins/services/state/Timestamp";
@@ -169,7 +186,9 @@ import placeholder_img from "@/assets/avatar_default.png";
 export default {
   mixins: [TransactionID, Timestamp],
   components: {
+    "image-capture": ImageCapture,
     "webcam-capture": WebcamCapture,
+    RegistrationRequestCard,
   },
   data() {
     return {
@@ -448,5 +467,23 @@ export default {
 
 .highlighted {
   background-color: white;
+}
+
+/* Styles copied from LivenessDemoPage */
+.app {
+  padding: 2em;
+}
+.app-card {
+  background: #242e4e;
+  border-radius: 3em;
+
+  padding: 3vh 5vw;
+  margin: 1em 0em 1em 0em;
+
+  max-width: 100vw;
+}
+
+p {
+  font-family: Helvetica Neue Regular;
 }
 </style>
