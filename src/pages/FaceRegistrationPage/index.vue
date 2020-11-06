@@ -12,7 +12,26 @@
         :payloadCluster="payloadData.cluster"
         :payloadClientId="payloadData.client_id"
         :payloadUserId="payloadData.user_id"
+        :fnGenerateUserId="makeUser_id"
+        :paramApi="apiInferencing"
       ></RegistrationRequestCard>
+      <RegistrationResponseCard></RegistrationResponseCard>
+
+      <div class="upload-section">
+        <button
+          v-if="payloadData.cluster == 0 || payloadData.username == 0"
+          title="ISI SEMUA INFORMASI terlebih dahulu"
+          disabled
+        >
+          UPLOAD
+        </button>
+        <button
+          v-if="payloadData.cluster != 0 && payloadData.username != 0"
+          v-on:click="uploadImgInference"
+        >
+          UPLOAD
+        </button>
+      </div>
     </div>
     <div class="photo-compare row">
       <div class="col-md-6 row">
@@ -165,6 +184,7 @@ import { bus } from "@/main";
 
 import ImageCapture from "@/components/LivenessDemo/ImageCapture.vue";
 import RegistrationRequestCard from "@/components/RegistrationRequestCard.vue";
+import RegistrationResponseCard from "@/components/RegistrationResponseCard.vue";
 
 // mixins imports
 import TransactionID from "@/mixins/services/state/TransactionID";
@@ -189,6 +209,7 @@ export default {
     "image-capture": ImageCapture,
     "webcam-capture": WebcamCapture,
     RegistrationRequestCard,
+    RegistrationResponseCard,
   },
   data() {
     return {

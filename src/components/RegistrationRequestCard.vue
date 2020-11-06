@@ -15,6 +15,12 @@
       <div class="col-md-10 row" style="padding: 0vh 3vw 0vh 3vw; margin: auto">
         <InputField label="user_id" :value="payloadUserId"></InputField>
       </div>
+      <b-button @click="fnGenerateUserId" class="col-sm-5"
+        >Generate User_ID</b-button
+      >
+      <div class="col-md-10 row" style="padding: 0vh 3vw 0vh 3vw; margin: auto">
+        <InputField label="custom API" :value="paramApi"></InputField>
+      </div>
     </div>
   </div>
 </template>
@@ -28,6 +34,10 @@ export default {
     "payloadCluster",
     "payloadClientId",
     "payloadUserId",
+
+    "fnGenerateUserId",
+
+    "paramApi",
   ],
   components: { InputField },
 };
