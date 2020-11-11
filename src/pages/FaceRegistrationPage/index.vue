@@ -12,6 +12,33 @@
       <div class="col-sm-12 app-card">
         <h2>Request Fields</h2>
         <p>request params</p>
+
+        <!-- Upload Button -->
+        <div class="upload-section" style="margin: 30px">
+          <button
+            v-if="
+              !Boolean(payloadData.user_image) ||
+              !Boolean(payloadData.username) ||
+              !Boolean(payloadData.cluster_id)
+            "
+            disabled
+            title="ISI SEMUA INFORMASI terlebih dahulu"
+            v-on:click="uploadImgInference"
+            style="padding: 20px 50px"
+            class="upload-button disabled"
+          >
+            UPLOAD
+          </button>
+          <button
+            v-else
+            v-on:click="uploadImgInference"
+            style="padding: 20px 50px"
+            class="upload-button"
+          >
+            UPLOAD
+          </button>
+        </div>
+
         <div class="response-area row">
           <div class="column col-md-4" style="padding: 1em">
             <h4>Nama</h4>
@@ -38,6 +65,15 @@
             />
           </div>
           <div class="column col-md-4" style="padding: 1em">
+            <h4>custom API</h4>
+            <input
+              type="text"
+              v-model="apiInferencing"
+              class="results col-sm-10 h-75"
+            />
+          </div>
+
+          <div class="column col-md-4" style="padding: 1em">
             <h4>user_id</h4>
             <input
               type="text"
@@ -46,17 +82,9 @@
             />
           </div>
 
-          <b-button @click="makeUser_id" class="col-sm-5"
+          <b-button @click="makeUser_id" class="col-sm-5 generate-id-button"
             >Generate User_ID</b-button
           >
-          <div class="column col-md-4" style="padding: 1em">
-            <h4>custom API</h4>
-            <input
-              type="text"
-              v-model="apiInferencing"
-              class="results col-sm-10 h-75"
-            />
-          </div>
         </div>
       </div>
 
@@ -69,23 +97,6 @@
         :paramApi="apiInferencing"
       ></RegistrationRequestCard> -->
       <!-- <RegistrationResponseCard></RegistrationResponseCard> -->
-
-      <div class="upload-section">
-        <!-- <button
-          v-if="payloadData.cluster == 0 || payloadData.username == 0"
-          title="ISI SEMUA INFORMASI terlebih dahulu"
-          disabled
-        >
-          UPLOAD
-        </button> -->
-        <!-- <button
-          v-if="payloadData.cluster != 0 && payloadData.username != 0"
-          v-on:click="uploadImgInference"
-        >
-          UPLOAD
-        </button> -->
-        <button v-on:click="uploadImgInference">UPLOAD</button>
-      </div>
     </div>
     <div class="photo-compare row">
       <div class="col-md-6 row">
@@ -281,7 +292,7 @@ export default {
         user_image: "",
 
         // image_base64: [],
-        cluster: "",
+        cluster_id: "Trial",
         client_id: "",
       },
       responseData: {
@@ -309,6 +320,15 @@ export default {
     $_ImageCapture_ReceiveImage(image) {
       console.log("image received");
       this.payloadData.user_image = image.split(",")[1];
+      console.log(this.payloadData);
+      console.log(!this.payloadData.user_image);
+      console.log(!this.payloadData.username);
+      console.log(!this.payloadData.cluster_id);
+      console.log(
+        !this.payloadData.user_image ||
+          !this.payloadData.username ||
+          !this.payloadData.cluster_id
+      );
     },
 
     // KUMPULAN METHOD UNTUK UPLOAD IMAGE DARI KOMPUTER
@@ -590,7 +610,7 @@ p {
 .response-area {
   color: white;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   /* padding: 2vh; */
@@ -614,5 +634,60 @@ div {
 h4 {
   padding: 0 0.2em;
   font-size: 1em;
+}
+
+/* From LivenessResults component */
+button.upload-button {
+  /* font */
+  font-family: Helvetica Neue Bold;
+  font-weight: bold;
+  font-size: large;
+  color: white;
+  text-shadow: 2px 2px 4px #000000;
+  text-align: center;
+
+  background-color: #3d64ff;
+  border: none;
+  border-radius: 2em;
+  padding: 1.2em;
+  max-width: 14em;
+}
+button.upload-button:hover {
+  background-color: #5a9bfd;
+}
+button.upload-button:focus {
+  outline: 0 !important;
+}
+button.upload-button.disabled {
+  color: rgb(161, 161, 161);
+  background-color: #6d6d6d;
+}
+button.upload-button.disabled:hover {
+  background-color: #6d6d6d;
+}
+
+button.generate-id-button {
+  /* font */
+  font-family: Helvetica Neue Bold;
+  font-weight: 400;
+  font-size: medium;
+  color: white;
+  text-shadow: 2px 2px 4px #000000;
+  text-align: center;
+
+  background-color: #374369;
+  border: none;
+  border-radius: 2em;
+  height: 4em;
+  max-height: 7em;
+  width: 150px;
+
+  margin: 1em 0;
+}
+button.generate-id-button:hover {
+  background-color: #5b6ca3;
+}
+button.generate-id-button:focus {
+  outline: 0 !important;
 }
 </style>
