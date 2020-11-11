@@ -7,30 +7,84 @@
         <p>Capture foto wajah</p>
         <image-capture @userPhoto="$_ImageCapture_ReceiveImage"></image-capture>
       </div>
-      <RegistrationRequestCard
+
+      <!-- RegistrationRequestCard expanded -->
+      <div class="col-sm-12 app-card">
+        <h2>Request Fields</h2>
+        <p>request params</p>
+        <div class="response-area row">
+          <div class="column col-md-4" style="padding: 1em">
+            <h4>Nama</h4>
+            <input
+              type="text"
+              v-model="payloadData.username"
+              class="results col-sm-10 h-75"
+            />
+          </div>
+          <div class="column col-md-4" style="padding: 1em">
+            <h4>cluster_id</h4>
+            <input
+              type="text"
+              v-model="payloadData.cluster_id"
+              class="results col-sm-10 h-75"
+            />
+          </div>
+          <div class="column col-md-4" style="padding: 1em">
+            <h4>client_id</h4>
+            <input
+              type="text"
+              v-model="payloadData.client_id"
+              class="results col-sm-10 h-75"
+            />
+          </div>
+          <div class="column col-md-4" style="padding: 1em">
+            <h4>user_id</h4>
+            <input
+              type="text"
+              v-model="payloadData.user_id"
+              class="results col-sm-10 h-75"
+            />
+          </div>
+
+          <b-button @click="makeUser_id" class="col-sm-5"
+            >Generate User_ID</b-button
+          >
+          <div class="column col-md-4" style="padding: 1em">
+            <h4>custom API</h4>
+            <input
+              type="text"
+              v-model="apiInferencing"
+              class="results col-sm-10 h-75"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- <RegistrationRequestCard
         :payloadUsername="payloadData.username"
         :payloadCluster="payloadData.cluster"
         :payloadClientId="payloadData.client_id"
         :payloadUserId="payloadData.user_id"
         :fnGenerateUserId="makeUser_id"
         :paramApi="apiInferencing"
-      ></RegistrationRequestCard>
-      <RegistrationResponseCard></RegistrationResponseCard>
+      ></RegistrationRequestCard> -->
+      <!-- <RegistrationResponseCard></RegistrationResponseCard> -->
 
       <div class="upload-section">
-        <button
+        <!-- <button
           v-if="payloadData.cluster == 0 || payloadData.username == 0"
           title="ISI SEMUA INFORMASI terlebih dahulu"
           disabled
         >
           UPLOAD
-        </button>
-        <button
+        </button> -->
+        <!-- <button
           v-if="payloadData.cluster != 0 && payloadData.username != 0"
           v-on:click="uploadImgInference"
         >
           UPLOAD
-        </button>
+        </button> -->
+        <button v-on:click="uploadImgInference">UPLOAD</button>
       </div>
     </div>
     <div class="photo-compare row">
@@ -223,7 +277,10 @@ export default {
       payloadData: {
         user_id: "", // mungkin secara database frontend, ini untuk mengindentifikasi user apa saja yang sudah di-register, format 9 numbers / "nnnnnnnn"
         username: "", // isi nama yang ingin didaftarkan
-        image_base64: [],
+
+        user_image: "",
+
+        // image_base64: [],
         cluster: "",
         client_id: "",
       },
@@ -249,6 +306,11 @@ export default {
     };
   },
   methods: {
+    $_ImageCapture_ReceiveImage(image) {
+      console.log("image received");
+      this.payloadData.user_image = image.split(",")[1];
+    },
+
     // KUMPULAN METHOD UNTUK UPLOAD IMAGE DARI KOMPUTER
     inputImageFile(e) {
       const files = e.target.files;
@@ -269,19 +331,20 @@ export default {
       reader.readAsDataURL(file);
     },
     uploadImgInference() {
-      if (!this.displayObjects.images_in.length) {
-        alert("Please Insert Two Images");
-        return;
-      }
+      // if (!this.displayObjects.images_in.length) {
+      //   alert("Please Insert Two Images");
+      //   return;
+      // }
       this.response.status = "uploading, please wait";
 
       const photoPayload = {
         trx_id: this.$_TransactionID_transactionID,
         user_id: this.payloadData.user_id,
         user_name: this.payloadData.username,
-        user_image: this.payloadData.image_base64,
+        // user_image: this.payloadData.image_base64,
+        user_image: this.payloadData.user_image,
         client_id: this.payloadData.client_id,
-        cluster_id: this.payloadData.cluster,
+        cluster_id: this.payloadData.cluster_id,
         timestamp: this.$_Timestamp_timestamp,
       };
       console.log(photoPayload);
@@ -350,7 +413,8 @@ export default {
       this.fetchURL();
       axios.get(this.clustersJSON).then((regionJSON) => {
         this.regionList = regionJSON.data.cluster;
-        this.payloadData.cluster = this.regionList[0];
+        console.log(this.regionList);
+        // this.payloadData.cluster = this.regionList[0];
         this.payloadData.client_id = this.regionList[0];
         console.log(this.payloadData);
       });
@@ -506,5 +570,49 @@ export default {
 
 p {
   font-family: Helvetica Neue Regular;
+}
+
+.app-card {
+  background: #242e4e;
+  border-radius: 3em;
+
+  padding: 3vh 5vw;
+  margin: 1em 0em 1em 0em;
+
+  max-width: 100vw;
+}
+
+/* Copied from RegistrationRequestCard */
+p {
+  font-family: Helvetica Neue Regular;
+}
+
+.response-area {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* padding: 2vh; */
+}
+
+/* Copied from CardInputField */
+.results {
+  padding: 1em;
+  background-color: #374369;
+  border-radius: 0.5em;
+  color: white;
+}
+
+div {
+  font-family: Helvetica Neue Regular;
+  font-weight: bold;
+  text-align: left;
+  color: white;
+}
+
+h4 {
+  padding: 0 0.2em;
+  font-size: 1em;
 }
 </style>
