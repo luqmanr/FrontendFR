@@ -2,25 +2,109 @@
   <div class="app">
     <div class="row app-cards">
       <h1 class="col-sm-12">Absensi Page</h1>
+
+      <!-- START instructions -->
+      <p class="col-md-12 row" style="margin: auto">INSTRUKSI:</p>
+      <p class="instruction-part col-sm-12">
+        <span class="instruction-text"
+          >1. Ambil foto muka Anda dengan menekan tombol CAPTURE FOTO</span
+        >
+      </p>
+      <p class="instruction-part col-sm-12">
+        <span class="instruction-text">2. Tekan tombol UPLOAD</span>
+      </p>
+      <p class="instruction-part col-sm-12">
+        <span class="instruction-text"
+          >3. Lihat hasil Pengenalan Wajah Anda!</span
+        >
+      </p>
+      <!-- END instructions -->
+
       <div class="col-sm-12 app-card">
         <h2>Isi Data Anda</h2>
         <p>Capture foto wajah</p>
         <image-capture @userPhoto="$_ImageCapture_ReceiveImage"></image-capture>
       </div>
 
+      <!-- Upload Option Card -->
       <div class="col-sm-12 app-card">
-        <h2>Cek Liveness & Verifikasi Wajah</h2>
-        <p>Tekan tombol di bawah untuk memproses data!</p>
-        <AbsensiResponseCard
-          @LivenessResponse="$_LivenessResults_ReceiveLivenessResponse"
-          :userImage="userImage"
-          :userVideo="userVideo"
-          :facePattern="facePattern"
-          :livenessAPI="livenessAPI"
-        ></AbsensiResponseCard>
+        <h2>Upload</h2>
+        <div style="margin-top: 30px">
+          <span class="col-md-6" style="color: white; margin: 5vh 0vw 0vh 0vw"
+            >Kelas/Region/Cluster:
+          </span>
+          <select
+            v-model.lazy="payloadData.cluster"
+            class="col-md-6"
+            style="margin: 0vh 0vw 5vh 0vw"
+          >
+            <option v-for="regions in regionList" :key="regions">
+              {{ regions }}
+            </option>
+          </select>
+        </div>
+        <geolocation
+          @getGeoLocation="updateGeoLocation($event)"
+          style="color: red"
+        ></geolocation>
+        <button
+          v-if="!payloadData.cluster"
+          title="Pilih instansi terlebih dahulu"
+          disabled
+        >
+          UPLOAD
+        </button>
+        <button v-else v-on:click="uploadImgInference">UPLOAD</button>
+      </div>
+
+      <AbsensiResponseCard
+        :userName="responseData.user_name"
+        :confidenceLevel="responseData.confidence_level"
+        :timestamp="responseData.timestamp"
+        :maskerStatus="responseData.masker_status"
+        :responseError="responseData.response_error"
+        :latitude="userLocation.latitude"
+        :longitude="userLocation.longitude"
+      ></AbsensiResponseCard>
+
+      <!-- Feedback Card -->
+      <div class="col-sm-12 app-card">
+        <h2>Feedback</h2>
+
+        <div class="col-md-6 row" style="margin-top: 30px">
+          <span class="col-md-12" style="color: white"
+            >Apakah hasil Pengenalan Wajah Anda benar?
+          </span>
+          <select
+            v-model.lazy="feedbackData.recognition_status"
+            class="col-md-12"
+          >
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </div>
+
+        <div class="col-md-6 row" style="margin-top: 30px">
+          <span class="col-sm-12" style="color: white"
+            >Additional Feedback
+          </span>
+          <input
+            type="text"
+            v-model="feedbackData.additional_comments"
+            class="col-sm-12"
+          />
+        </div>
+
+        <button @click="logFeedback()" style="margin-top: 30px">
+          SUBMIT FEEDBACK
+        </button>
       </div>
     </div>
 
+    <!-- START Old code -->
+    <!-- Inner comments use the following format -->
+    <!-- <%-- [comment] --%> -->
+    <!--
     <div class="photo-compare row" style="margin: auto">
       <p class="col-md-12 row" style="margin: auto">INSTRUKSI:</p>
 
@@ -28,7 +112,7 @@
         <span class="instruction-text"
           >1. Ambil foto muka Anda dengan menekan tombol CAPTURE FOTO</span
         >
-        <!-- <span class='instruction-text'>, atau gunakan CAPTURE WEBCAM untuk mengambil foto melalui webcam</span> -->
+        <%-- <span class='instruction-text'>, atau gunakan CAPTURE WEBCAM untuk mengambil foto melalui webcam</span> --%>
       </p>
 
       <p class="instruction-part col-sm-12">
@@ -41,11 +125,11 @@
         >
       </p>
 
-      <!-- INI ISINYA PREVIEW IMG dari object "displayObjects.input_image",
-            DAN JUGA BUTTON UNTUK ORANG MASUKKIN FILE ke "image_base64"-->
+      <%-- INI ISINYA PREVIEW IMG dari object "displayObjects.input_image",
+            DAN JUGA BUTTON UNTUK ORANG MASUKKIN FILE ke "image_base64"--%>
       <div class="photo-card col-md-6">
         <div class="photo-section">
-          <!-- <div class="photo">
+          <%-- <div class="photo">
                         <img v-bind:src="displayObjects.placeholder_img" v-show="!displayObjects.input_image.length">
                         <img v-bind:src="displayObjects.preview_image" v-show="displayObjects.preview_image.length" id="input_image">
                         <canvas ref="resized_image"
@@ -56,25 +140,25 @@
                             :width="rotatedObjects.image_width"
                             :height="rotatedObjects.image_height"
                             ></canvas>
-                    </div> -->
+                    </div> --%>
 
           <attendance-card
             @userPhoto="$_AttendanceCard_ReceiveImage"
           ></attendance-card>
         </div>
 
-        <!-- <div class="file-select">
+        <%-- <div class="file-select">
                     <label for="file_in">CAPTURE FOTO</label>
                     <input type="file" v-on:change="inputImageFile" id="file_in">
                 </div>
-                <button @click='rotateImage()'>ROTATE IMAGE</button> -->
+                <button @click='rotateImage()'>ROTATE IMAGE</button> --%>
         <geolocation
           @getGeoLocation="updateGeoLocation($event)"
           style="color: red"
         ></geolocation>
       </div>
 
-      <!-- <div class="webcam-toggle row col-md-6">
+      <%-- <div class="webcam-toggle row col-md-6">
                 <b-button v-b-toggle.collapse-1 variant="primary"
                     v-on:click="setWebcamStatusToBus"
                     class='col-sm-12'
@@ -85,7 +169,7 @@
                 <b-collapse id="collapse-1" class="mt-2 row" visible >
                     <webcam-capture class='webcam-area col-sm-12' v-if="conditionals.webcam_in"></webcam-capture>
                 </b-collapse>
-            </div> -->
+            </div> --%>
     </div>
 
     <div class="upload-section">
@@ -114,11 +198,11 @@
       </button>
     </div>
 
-    <!-- INI ISINYA RESPONSE JSON DARI SERVER
-        YAITU "response" & "conf_level" -->
+    <%-- INI ISINYA RESPONSE JSON DARI SERVER
+        YAITU "response" & "conf_level" --%>
     <div class="response-area">
       <div class="row" style="padding: 0vh 3vw 0vh 3vw; margin: auto">
-        <!-- <div class="column col-md-6"
+        <%-- <div class="column col-md-6"
                      style="margin: 1vh 0vw 1vh 0vw;
                             border-color: grey;
                             border-style: solid;">
@@ -126,7 +210,7 @@
                     <div style='font-weight: bolder;
                                 list-style-type: none;
                                 font-size: larger;'>{{ responseData.status }}</div>    
-                </div> -->
+                </div> --%>
 
         <div
           class="column col-md-6"
@@ -251,7 +335,7 @@
     </div>
 
     <div class="row" style="margin: auto">
-      <!-- Di sini bisa diganti dengan apa pun cluster yang disediakan oleh api_fr -->
+      <%-- Di sini bisa diganti dengan apa pun cluster yang disediakan oleh api_fr --%>
       <div class="col-md-6 row" style="margin: auto">
         <b-button
           v-if="LoginState"
@@ -327,6 +411,8 @@
         SUBMIT FEEDBACK
       </button>
     </div>
+    -->
+    <!-- END Old code -->
 
     <!-- <button @click='checkPayloadData'>PAYLOAD DATA CHECK</button>
         <div style='color: white;'>{{payloadData}}</div> -->
