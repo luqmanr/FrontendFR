@@ -8,6 +8,7 @@
         <image-capture @userPhoto="$_ImageCapture_ReceiveImage"></image-capture>
       </div>
 
+      <!-- START RegistrationRequestCard + RawResponseCard -->
       <!-- RegistrationRequestCard expanded -->
       <div class="col-sm-12 app-card">
         <h2>Request Fields</h2>
@@ -87,16 +88,17 @@
         </div>
       </div>
 
-      <!-- <RegistrationRequestCard
-        :payloadUsername="payloadData.username"
-        :payloadCluster="payloadData.cluster"
-        :payloadClientId="payloadData.client_id"
-        :payloadUserId="payloadData.user_id"
-        :fnGenerateUserId="makeUser_id"
-        :paramApi="apiInferencing"
-      ></RegistrationRequestCard> -->
-      <!-- <RegistrationResponseCard></RegistrationResponseCard> -->
+      <div class="col-sm-12 app-card">
+        <h2>Raw Response</h2>
+        <p>Raw Response: {{ responseData.raw_data }}</p>
+      </div>
     </div>
+    <!-- END RegistrationRequestCard + RawResponseCard -->
+
+    <!-- START Old code -->
+    <!-- Inner comments use the following format -->
+    <!-- <%-- [comment] --%> -->
+    <!--
     <div class="photo-compare row">
       <div class="col-md-6 row">
         <span class="col-sm-12">Nama: </span>
@@ -125,12 +127,12 @@
         >
       </div>
 
-      <!-- Di sini bisa diganti dengan apa pun cluster yang disediakan oleh api_fr -->
+      <%-- Di sini bisa diganti dengan apa pun cluster yang disediakan oleh api_fr --%>
       <div class="col-md-6 row" style="margin: auto">
-        <!-- <span class="col-md-12">cluster_id: </span>
+        <%-- <span class="col-md-12">cluster_id: </span>
                 <select v-model.lazy="payloadData.cluster" class="col-md-12">
                     <option v-for="regions in regionList" :key="regions">{{regions}}</option>
-                </select> -->
+                </select> --%>
 
         <b-button
           v-b-toggle.collapse-2
@@ -152,10 +154,10 @@
       </div>
 
       <div class="col-md-6 row" style="margin: auto">
-        <!-- <span class="col-md-12">API List: </span>
+        <%-- <span class="col-md-12">API List: </span>
                 <select v-model.lazy="apiInferencing" class="col-md-12">
                     <option v-for="routes in recognizeRouteList" :key="routes">{{routes}}</option>
-                </select> -->
+                </select> --%>
 
         <b-button
           v-b-toggle.collapse-3
@@ -172,8 +174,8 @@
         </b-collapse>
       </div>
 
-      <!-- INI ISINYA PREVIEW IMG dari object "displayObjects.images_in",
-            DAN JUGA BUTTON UNTUK ORANG MASUKKIN FILE ke "image_base64"-->
+      <%-- INI ISINYA PREVIEW IMG dari object "displayObjects.images_in",
+            DAN JUGA BUTTON UNTUK ORANG MASUKKIN FILE ke "image_base64"--%>
       <div class="photo-card col-md-6">
         <div class="photo-section">
           <div class="photo">
@@ -195,8 +197,8 @@
       </div>
     </div>
 
-    <!-- INI ISINYA RESPONSE JSON DARI SERVER
-        YAITU "response" & "conf_level" -->
+    <%-- INI ISINYA RESPONSE JSON DARI SERVER
+        YAITU "response" & "conf_level" --%>
     <div class="response-area">
       <div class="column">
         <p>Raw Response: {{ responseData.raw_data }}</p>
@@ -220,7 +222,7 @@
     </div>
 
     <div class="webcam-toggle row">
-      <!-- Toggle Webcam -->
+      <%-- Toggle Webcam --%>
       <b-button
         v-b-toggle.collapse-1
         variant="primary"
@@ -238,6 +240,8 @@
         ></webcam-capture>
       </b-collapse>
     </div>
+    -->
+    <!-- END Old code -->
   </div>
 </template>
 
