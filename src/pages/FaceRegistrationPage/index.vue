@@ -73,18 +73,17 @@
             />
           </div>
 
-          <div class="column col-md-4" style="padding: 1em">
+          <div class="col-md" style="">
             <h4>user_id</h4>
             <input
               type="text"
               v-model="payloadData.user_id"
-              class="results col-sm-10 h-75"
+              class="results row-sm"
             />
+            <b-button @click="makeUser_id" class="row-sm generate-id-button"
+              >Generate User_ID</b-button
+            >
           </div>
-
-          <b-button @click="makeUser_id" class="col-sm-5 generate-id-button"
-            >Generate User_ID</b-button
-          >
         </div>
       </div>
 
@@ -677,12 +676,9 @@ button.generate-id-button {
 
   background-color: #374369;
   border: none;
-  border-radius: 2em;
-  height: 4em;
-  max-height: 7em;
   width: 150px;
 
-  margin: 1em 0;
+  margin-left: 2px;
 }
 button.generate-id-button:hover {
   background-color: #5b6ca3;
