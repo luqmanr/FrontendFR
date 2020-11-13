@@ -37,7 +37,7 @@ export default {
       default: undefined
     },
     loggerAPI: {
-      default: "https://riset.luqmanr.xyz/api_fr/demo/liveness-verification/logger"
+      default: "https://riset.luqmanr.xyz/api_fr/demo/groundtruth-LV/v1.0"
     }
   },
   data() {
@@ -69,8 +69,14 @@ export default {
           JSON.stringify(payload))
         .then(response => {
           console.log(response)
+          if (response.data.error_message != "None") {
+            alert("log response: ", response.data.error_message)
+          } else {
+            alert("log successful")
+          }
         }).catch(error => {
           console.log(error)
+          alert("error: ")
         })
     }
   },

@@ -21,7 +21,7 @@
       <div class="col-sm-12 app-card">
         <h2>Log Data Asli (Ground Truth)</h2>
         <p>for logs and debugging purposes</p>
-        <groundtruth-logger :livenessResponse="livenessResponse"></groundtruth-logger>
+        <groundtruth-logger :loggerAPI="loggerAPI" :livenessResponse="livenessResponse"></groundtruth-logger>
       </div>
     </div>
   </div>
@@ -51,6 +51,7 @@ export default {
       livenessResponse: undefined,
       videoDuration: 10000,
       livenessAPI: "https://riset.luqmanr.xyz/api_fr/demo/liveness-verification/v1.0",
+      loggerAPI: "https://riset.luqmanr.xyz/api_fr/demo/groundtruth-LV/v1.0"
       // livenessAPI: "http://localhost:9999/dummy_response"
     }
   },
