@@ -98,8 +98,14 @@ export default {
         facePattern: {
             default: undefined
         },
+        clientID: {
+            default: "-"
+        },
+        clientToken: {
+            default: "-"
+        },
         livenessAPI: {
-            default: "https://riset.luqmanr.xyz/api_fr/demo/liveness-verification"
+            default: "https://api.riset.ai/api_fr/demo/liveness-verification"
         }
     },
     data() {
@@ -134,7 +140,9 @@ export default {
                 "user_image": this.userImage,
                 "user_video": this.userVideo,
                 "pattern": this.facePattern,
-                "trx_id": this.$_TransactionID_transactionID
+                "trx_id": this.$_TransactionID_transactionID,
+                "client_id":    this.clientID,
+                "client_token": this.clientToken
             }
             console.log(payload)
 

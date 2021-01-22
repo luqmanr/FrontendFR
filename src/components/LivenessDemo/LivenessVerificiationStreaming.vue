@@ -83,8 +83,14 @@ export default {
     },
     props: {
         livenessAPI: {
-            default: "https://riset.luqmanr.xyz/api_fr/demo/liveness-verification/v1.2"
+            default: "https://api.riset.ai/api_fr/sandbox-liveness/liveness-verification/v1.2"
             // default: "http://localhost:9999/dummy_response"
+        },
+        clientID: {
+            default: "-"
+        },
+        clientToken: {
+            default: "-"
         }
     },
     data() {
@@ -135,9 +141,11 @@ export default {
         },
         CheckLiveness() {
             const payload = {
-                "user_image": this.userImage,
-                "pattern":    this.facePattern[0],
-                "trx_id":     this.$_TransactionID_transactionID
+                "user_image":   this.userImage,
+                "pattern":      this.facePattern[0],
+                "trx_id":       this.$_TransactionID_transactionID,
+                "client_id":    this.clientID,
+                "client_token": this.clientToken
             }
             console.log(payload)
 
@@ -257,7 +265,7 @@ export default {
         },
         livenessResponses(response) {
             this.$emit("livenessResponse", this.livenessResponses)
-        }
+        },
     },
     mounted() {
     

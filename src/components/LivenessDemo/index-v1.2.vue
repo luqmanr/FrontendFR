@@ -3,11 +3,23 @@
     <div class="row app-cards">
       <h1 class="col-sm-12">Liveness Verification Page</h1>
       <div class="col-sm-12 app-card">
+        <h2>Isi Client ID dan Access Token Anda </h2>
+        <p></p>
+        <div class="row">
+          <client-identification 
+            @clientID="$_ClientIdentification_ReceiveClientID"
+            @clientToken="$_ClientIdentification_ReceiveClientToken"></client-identification>
+        </div>
+      </div>
+      <div class="col-sm-12 app-card">
         <h2>Isi Data Anda </h2>
         <p>Capture foto wajah</p>
         <div class="row">
           <div class="col-sm-6" style="color: white;">{{ livenessResponse }}</div>
-          <liveness-verification @livenessResponse="$_ImageCapture_ReceiveLivenessResponse" class="col-sm-12"></liveness-verification>
+          <liveness-verification  class="col-sm-12"
+            @livenessResponse="$_LivenessVerification_ReceiveLivenessResponse"
+            :clientID="clientID"
+            :clientToken="clientToken"></liveness-verification>
         </div>
       </div>
     </div>
@@ -16,33 +28,31 @@
 
 <script>
 // component imports
+import ClientIdentification from '@/components/LivenessDemo/ClientIdentification.vue'
 import LivenessVerificationStreaming from '@/components/LivenessDemo/LivenessVerificiationStreaming.vue'
 
 export default {
   components: {
+    'client-identification': ClientIdentification,
     'liveness-verification': LivenessVerificationStreaming,
   },
   data() {
     return {
-      livenessAPI: "https://riset.luqmanr.xyz/api_fr/demo/liveness-verification/v1.0",
+      clientID: "",
+      clientToken: "",
+      livenessAPI: "https://api.riset.ai/api_fr/demo/liveness-verification/v1.0",
       livenessResponse: ["{result: this is a placeholder, result will show up here}"],
     }
   },
   methods: {
-    $_ImageCapture_ReceiveImage(image) {
-      console.log("image received")
-      this.userImage = image.split(',')[1]
-    },
-    $_ImageCapture_ReceiveLivenessResponse(response) {
+    $_LivenessVerification_ReceiveLivenessResponse(response) {
       this.livenessResponse = response
     },
-    $_VideoRecorder_ReceiveVideo(video) {
-      console.log("video received")
-      this.userVideo = video
+    $_ClientIdentification_ReceiveClientID(clientID) {
+      this.clientID = clientID
     },
-    $_FacePattern_ReceiveFacePattern(pattern) {
-      console.log(pattern)
-      this.facePattern = pattern
+    $_ClientIdentification_ReceiveClientToken(clientToken) {
+      this.clientToken = clientToken
     }
   }
 }

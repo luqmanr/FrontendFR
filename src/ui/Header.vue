@@ -8,19 +8,19 @@
 
     <nav>
       <ul class="row">
-          <!-- All have access to these pages -->
+          All have access to these pages
           <router-link class='col-md-12' :to="{ path:'/absensi' }" tag="button" exact>Absensi</router-link>
           <router-link class='col-md-12' to="/checkattendance" tag="button" exact>Check Attendance</router-link>
           <router-link class='col-md-12' to="/login" tag="button" exact>Admin</router-link>
-          <router-link class='col-md-12' to="/livenessdemo" tag="button" exact>Liveness Demo v1.0</router-link>
+          <!-- <router-link class='col-md-12' to="/livenessdemo-v1.0" tag="button" exact>Liveness Demo v1.0</router-link>
           <router-link class='col-md-12' to="/livenessdemo-v1.1" tag="button" exact>Liveness Demo v1.1</router-link>
-          <router-link class='col-md-12' to="/livenessdemo-v1.2" tag="button" exact>Liveness Demo v1.2</router-link>
+          <router-link class='col-md-12' to="/livenessdemo-v1.2" tag="button" exact>Liveness Demo v1.2</router-link> -->
 
           <!-- Only admins have access to these pages -->
           <router-link v-if="buttonView" class='col-md-12' to="/testpage" tag="button" exact>Testpage</router-link>
           <router-link v-if="buttonView" class='col-md-12' to="/registrationimage" tag="button" exact>Registration</router-link>
-          <router-link v-if="buttonView" class='col-md-12' to="/listuser" tag="button" exact>List User</router-link>
-          <router-link v-if="buttonView" class='col-md-12' to="/deleteuser" tag="button" exact>Delete User</router-link>
+          <!-- <router-link v-if="buttonView" class='col-md-12' to="/listuser" tag="button" exact>List User</router-link>
+          <router-link v-if="buttonView" class='col-md-12' to="/deleteuser" tag="button" exact>Delete User</router-link> -->
         </ul>
     </nav>
   </div>
