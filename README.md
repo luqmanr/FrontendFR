@@ -16,3 +16,8 @@ git add . && \
 git commit -m "deploy latest build" && \
 git push -f git@github.com:luqmanr/luqmanr.github.io.git master
 ```
+
+
+# NGINX Setup
+
+Set `client_max_body_size 50M;` in `nginx.conf`
