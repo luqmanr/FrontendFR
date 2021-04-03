@@ -25,10 +25,10 @@ const routes = [
     {path: '/absensi', component: ImageUploader},
     {path: '/checkattendance', component: CheckAttendancePage},
 
-    // {path: '/livenessdemo', component: LivenessDemo},
-    // {path: '/livenessdemo-v1.1', component: LivenessDemov1dot1},
-    // {path: '/livenessdemo-v1.2', component: LivenessDemov1dot2},
-    // {path: '/testpage', component: TestPage}
+    {path: '/livenessdemo', component: LivenessDemo},
+    {path: '/livenessdemo-v1.1', component: LivenessDemov1dot1},
+    {path: '/livenessdemo-v1.2', component: LivenessDemov1dot2},
+    {path: '/testpage', component: TestPage}
 
 ]
 

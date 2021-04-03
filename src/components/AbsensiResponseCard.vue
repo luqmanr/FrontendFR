@@ -1,7 +1,7 @@
 <template>
   <div class="col-sm-12 app-card">
-    <h2>Response</h2>
-    <p>raw response</p>
+    <h2>Attendance Status</h2>
+    <p>Your data</p>
     <div class="response-area row">
       <div class="col-md-10 row" style="padding: 0vh 3vw 0vh 3vw; margin: auto">
         <CardTextField
@@ -49,7 +49,7 @@ export default {
     "maskerStatus",
     "responseError",
     "latitude",
-    "longitude",
+    "longitude"
   ],
   components: { CardTextField },
 };

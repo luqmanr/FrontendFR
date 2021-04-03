@@ -48,12 +48,13 @@
             style="color: red"
           ></geolocation>
           <button
-            v-if="payloadData.image_base64 == null"
+            v-if="!payloadData.cluster"
             title="Pilih instansi terlebih dahulu"
-            disabled>
+            disabled
+          >
             UPLOAD
           </button>
-          <button v-if="payloadData.image_base64 != null" @click="uploadImgInference(); CheckLiveness();">UPLOAD</button>
+          <button v-else v-on:click="uploadImgInference">UPLOAD</button>
         </div>
   
         <AbsensiResponseCard
@@ -66,11 +67,6 @@
           :latitude="userLocation.latitude"
           :longitude="userLocation.longitude"
         ></AbsensiResponseCard>
-
-        <LivenessResponseCard
-          :livenessResponses="livenessResponses"
-          :timeData="timeData"
-        ></LivenessResponseCard>
   
         <!-- Feedback Card -->
         <div class="col-sm-12 app-card">
@@ -116,7 +112,6 @@
   
   import ImageCapture from "@/components/LivenessDemo/ImageCapture.vue";
   import AbsensiResponseCard from "@/components/AbsensiResponseCard.vue";
-  import LivenessResponseCard from "@/components/LivenessResponseCard.vue";
   
   // mixins imports
   import TransactionID from "@/mixins/services/state/TransactionID";
@@ -144,13 +139,11 @@
       "attendance-card": AttendanceCard,
       "image-capture": ImageCapture,
       AbsensiResponseCard,
-      LivenessResponseCard
     },
     data() {
       return {
         clustersJSON: "",
         apiInferencing: "https://riset.luqmanr.xyz/api_fr/v3/recognizemask",
-        livenessAPI: "https://riset.luqmanr.xyz/riset_ai/liveness-verification/v1.3",
         apiAbsensiLog: [
           "https://absensi.indocisc.com/AbsensiLog.php?",
           "https://portal.luqmanr.xyz/absensi-log/AbsensiLog.php?",
@@ -170,7 +163,7 @@
           image_width: undefined,
         },
         payloadData: {
-          image_base64: null,
+          image_base64: [],
           cluster: "",
           client_id: "",
         },
@@ -184,14 +177,6 @@
           timestamp: "",
           raw_data: "",
         },
-        livenessResponses: {
-          status: "-",
-          angle: {
-            pitch: "-",
-            yaw: "-"
-          }
-        },
-        timeData: {},
         feedbackData: {
           recogniton_status: "True",
           additional_comments: "",
@@ -340,18 +325,19 @@
         }
   
         const photoPayload = {
-          trx_id:     this.$_TransactionID_transactionID,
+          trx_id: this.$_TransactionID_transactionID,
           user_image: this.payloadData.image_base64,
-          client_id:  this.payloadData.client_id,
+          client_id: this.payloadData.client_id,
           cluster_id: this.payloadData.cluster,
-          timestamp:  this.$_Timestamp_timestamp,
+          timestamp: this.$_Timestamp_timestamp,
         };
         console.log(photoPayload);
   
         // var apiEndPoint = 'dummy'
         var apiEndPoint = this.apiInferencing;
   
-        axios.post(
+        axios
+          .post(
             apiEndPoint,
             JSON.stringify(photoPayload),
             { headers: { "Content-Type": "application/json" } },
@@ -406,50 +392,6 @@
           "images uploading... " +
           " please wait for your recognition status"
         );
-      },
-      CheckLiveness() {
-        const payload = {
-          user_image:   this.payloadData.image_base64,
-          pattern:      "spoof",
-          trx_id:       this.$_TransactionID_transactionID,
-          client_id:    this.payloadData.client_id,
-          client_token: ""
-        }
-        console.log(payload)
-
-        this.axios.interceptors.request.use( x => {
-          x.meta = x.meta || {}
-          x.meta.requestStartedAt = new Date().getTime();
-          return x
-        })
-
-        this.axios.interceptors.response.use( x => {
-          x.responseTime = new Date().getTime() - x.config.meta.beginTimer;
-          return x
-        })
-
-        this.axios.post(
-          this.livenessAPI,
-          JSON.stringify(payload),
-          { headers : { 'Content-Type': 'application/json' } }
-        )
-        .then((response) => {
-          console.log(response)
-          this.livenessResponses = response.data.liveness
-          this.timeData.api = response.data.time.liveness
-          this.timeData.frontEnd = (new Date().getTime() - response.config.meta.requestStartedAt) / 1000
-          if (response.data.error_message != "None") {
-            this.livenessResponses.status = response.data.error_message
-            this.livenessResponses.angle = "-"
-          }
-        })
-        .catch((error) => {
-          console.log(error)
-          this.livenessResponses = {}
-          this.livenessResponses.status = "Status 404 - API Not Available"
-          this.timeData.api = response.data.time.liveness
-          this.timeData.frontEnd = (new Date().getTime() - response.config.meta.requestStartedAt) / 1000
-        })
       },
       logAbsensiLog() {
         var apiEndPoints = this.apiAbsensiLog;

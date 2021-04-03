@@ -7,7 +7,9 @@ module.exports = {
     publicPath: process.env.NODE_ENV === 'production'
     // ? '/kelas-br'
     // ? '/absensi'
-    ? '/kelas-br'
+    // ? '/absensi-itb-2021'
+    // ? '/kelas-br'
+    ? '/demo'
     // ? '/'
     : '/'
 }

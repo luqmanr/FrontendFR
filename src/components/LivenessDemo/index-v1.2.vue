@@ -18,6 +18,7 @@
           <div class="col-sm-6" style="color: white;">{{ livenessResponse }}</div>
           <liveness-verification  class="col-sm-12"
             @livenessResponse="$_LivenessVerification_ReceiveLivenessResponse"
+            :livenessAPI="livenessAPI"
             :clientID="clientID"
             :clientToken="clientToken"></liveness-verification>
         </div>
@@ -40,7 +41,7 @@ export default {
     return {
       clientID: "",
       clientToken: "",
-      livenessAPI: "https://api.riset.ai/api_fr/demo/liveness-verification/v1.0",
+      livenessAPI: "https://riset.luqmanr.xyz/api_liveness/v1/liveness-verification/v1.2",
       livenessResponse: ["{result: this is a placeholder, result will show up here}"],
     }
   },
